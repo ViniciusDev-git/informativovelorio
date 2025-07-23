@@ -110,158 +110,54 @@ export const DigitalSignage = ({
   }, [sheetsUrl]);
 
   return (
-    <div 
-      className="relative w-full min-h-screen overflow-hidden bg-gradient-animated"
-    >
-      {/* Subtle shimmer effect */}
-      <div className="absolute inset-0 animate-shimmer-subtle pointer-events-none"></div>
-      
-      {/* Desktop Layout (1920x1080) */}
-      <div className="hidden xl:block relative w-[1920px] h-[1080px] mx-auto 2xl:w-[3840px] 2xl:h-[2160px]">
-        {/* Título Principal - Desktop Position */}
-        <div className="absolute top-[60px] left-[161px] 2xl:top-[120px] 2xl:left-[322px]">
-          <h1 className="text-white font-lato font-black text-[74px] leading-none 2xl:text-[148px]">
+    <div className="relative w-full min-h-screen overflow-hidden bg-gradient-animated">
+      {/* Layout Responsivo Universal */}
+      <div className="relative w-full h-screen p-[2vw] flex flex-col">
+        {/* Header Section */}
+        <div className="flex justify-between items-start mb-[2vh]">
+          <h1 className="text-white font-lato font-black text-[clamp(2rem,4vw,6rem)] leading-tight">
             Informativo de Velórios
           </h1>
-        </div>
-
-        {/* Logo Cortel - Desktop Position */}
-        <div className="absolute top-[37px] left-[1165px] w-[397px] h-[130px] 2xl:top-[74px] 2xl:left-[2330px] 2xl:w-[794px] 2xl:h-[260px]">
           <img 
             src="/src/assets/logo-cortel-branco.svg"
             alt="Cortel São Paulo"
-            className="w-full h-full object-contain"
+            className="w-[clamp(200px,20vw,400px)] h-auto object-contain"
           />
         </div>
 
-        {/* Funeral Cards Container - Desktop */}
-        <FuneralList funerals={activeFunerals} />
-
-        {/* Main Video Panel - Desktop Position */}
-        <div className="absolute top-[190px] left-[970px] w-[788px] h-[702px] 2xl:top-[380px] 2xl:left-[1940px] 2xl:w-[1576px] 2xl:h-[1404px]">
-          <div 
-            className="w-full h-full rounded-[65px] overflow-hidden 2xl:rounded-[130px]"
-            style={{ backgroundColor: '#dadfea' }}
-          >
-            <TVSection videoUrl={videoUrl} />
-          </div>
-        </div>
-
-       {/* TV Cortel Footer Section - Desktop Position */}
-<div className="absolute top-[905px] left-[970px] w-[788px] flex flex-col items-center justify-center space-y-1 2xl:top-[1810px] 2xl:left-[1940px] 2xl:w-[1576px] 2xl:space-y-2">
-  <h2 className="text-white font-lato font-black text-[32px] 2xl:text-[64px]">
-    TV CORTEL
-  </h2>
-  
-  <img 
-    src="/src/assets/logo-parceiros.svg"
-    alt="Parceiros"
-    className="w-[500px] h-[80px] object-contain 2xl:w-[1000px] 2xl:h-[160px]"
-  />
-</div>
-
-        {/* Update indicator - Desktop */}
-        <div className="absolute bottom-[20px] left-[161px] 2xl:bottom-[40px] 2xl:left-[322px]">
-          <p className="text-white/70 text-sm 2xl:text-xl">
-            Atualizado às {lastUpdate.toLocaleTimeString('pt-BR')}
-          </p>
-        </div>
-      </div>
-
-      {/* Tablet Layout */}
-      <div className="hidden md:block xl:hidden relative w-full h-screen p-6">
-        {/* Header Section - Tablet */}
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-white font-lato font-black text-4xl lg:text-5xl leading-tight">
-            Informativo de<br />Velórios
-          </h1>
-          <img 
-            src="/src/assets/logo-cortel-branco.svg"
-            alt="Cortel São Paulo"
-            className="w-48 lg:w-60 h-auto object-contain"
-          />
-        </div>
-
-        {/* Content Grid - Tablet */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-200px)]">
-          {/* Funeral Cards Section - Tablet */}
-          <div className="order-2 lg:order-1">
-            <div className="h-full relative">
-              <FuneralList funerals={activeFunerals} />
-            </div>
+        {/* Main Content Grid */}
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-[2vw] min-h-0">
+          {/* Funeral Cards Section */}
+          <div className="flex flex-col">
+            <FuneralList funerals={activeFunerals} />
           </div>
 
-          {/* Video Section - Tablet */}
-          <div className="order-1 lg:order-2">
+          {/* Video Section */}
+          <div className="flex flex-col">
             <div 
-              className="w-full h-full rounded-3xl overflow-hidden"
+              className="flex-1 rounded-[clamp(1rem,3vw,4rem)] overflow-hidden min-h-[40vh]"
               style={{ backgroundColor: '#dadfea' }}
             >
               <TVSection videoUrl={videoUrl} />
             </div>
+            
+            {/* TV Cortel Footer */}
+            <div className="flex flex-col items-center justify-center mt-[1vh] space-y-[0.5vh]">
+              <h2 className="text-white font-lato font-black text-[clamp(1rem,2vw,3rem)]">
+                TV CORTEL
+              </h2>
+              <img 
+                src="/src/assets/logo-parceiros.svg"
+                alt="Parceiros"
+                className="w-[clamp(200px,25vw,500px)] h-auto object-contain"
+              />
+            </div>
           </div>
         </div>
 
-        {/* Footer - Tablet */}
-        <div className="absolute bottom-4 left-6 right-6 flex justify-between items-center">
-          <p className="text-white/70 text-sm">
-            Atualizado às {lastUpdate.toLocaleTimeString('pt-BR')}
-          </p>
-          <div className="flex items-center space-x-4">
-            <h2 className="text-white font-lato font-black text-2xl">
-              TV CORTEL
-            </h2>
-            <img 
-              src="/src/assets/logo-parceiros.svg"
-              alt="Parceiros"
-              className="w-32 h-auto object-contain"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile Layout */}
-      <div className="block md:hidden relative w-full min-h-screen p-4">
-        {/* Header Section - Mobile */}
-        <div className="text-center mb-6">
-          <img 
-            src="/src/assets/logo-cortel-branco.svg"
-            alt="Cortel São Paulo"
-            className="w-32 h-auto object-contain mx-auto mb-4"
-          />
-          <h1 className="text-white font-lato font-black text-2xl leading-tight">
-            Informativo de Velórios
-          </h1>
-        </div>
-
-        {/* Video Section - Mobile */}
-        <div className="mb-6">
-          <div 
-            className="w-full aspect-video rounded-2xl overflow-hidden"
-            style={{ backgroundColor: '#dadfea' }}
-          >
-            <TVSection videoUrl={videoUrl} />
-          </div>
-        </div>
-
-        {/* Funeral Cards Section - Mobile */}
-        <div className="mb-6">
-          <FuneralList funerals={activeFunerals} />
-        </div>
-
-        {/* Footer - Mobile */}
-        <div className="text-center space-y-2">
-          <div className="flex items-center justify-center space-x-2">
-            <h2 className="text-white font-lato font-black text-lg">
-              TV CORTEL
-            </h2>
-            <img 
-              src="/src/assets/logo-parceiros.svg"
-              alt="Parceiros"
-              className="w-20 h-auto object-contain"
-            />
-          </div>
-          <p className="text-white/70 text-xs">
+        {/* Footer */}
+        <div className="mt-[1vh]">
+          <p className="text-white/70 text-[clamp(0.75rem,1.2vw,1.5rem)]">
             Atualizado às {lastUpdate.toLocaleTimeString('pt-BR')}
           </p>
         </div>
