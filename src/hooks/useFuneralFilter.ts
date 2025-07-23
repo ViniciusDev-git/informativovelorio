@@ -15,15 +15,23 @@ export const useFuneralFilter = (funerals: FuneralData[]) => {
 
   const filterActiveFunerals = () => {
     const now = new Date();
-    const currentTime = now.toTimeString().slice(0, 5); // HH:MM format
-    const currentDate = now.toLocaleDateString('pt-BR'); // DD/MM/YYYY format
+    
+    // Padronizar o formato da data para YYYY-MM-DD
+    const year = now.getFullYear();
+    const month = (now.getMonth() + 1).toString().padStart(2, '0');
+    const day = now.getDate().toString().padStart(2, '0');
+    const currentDateFormatted = `${year}-${month}-${day}`;
 
     const filtered = funerals.filter(funeral => {
-      // Only show funerals for today
-      if (funeral.data !== currentDate) return false;
-      
-      // Show funerals that haven't ended yet
-      return funeral.hora_fim >= currentTime;
+      // Comparar com a data formatada e incluir hora_inicio
+      const funeralStartDateTime = `${funeral.data}T${funeral.hora_inicio}:00`;
+      const funeralEndDateTime = `${funeral.data}T${funeral.hora_fim}:00`;
+
+      const start = new Date(funeralStartDateTime);
+      const end = new Date(funeralEndDateTime);
+
+      // Verifica se o velório é para o dia atual E se a hora atual está entre a hora de início e fim
+      return funeral.data === currentDateFormatted && now >= start && now <= end;
     });
 
     // Sort by start time to show earliest first
