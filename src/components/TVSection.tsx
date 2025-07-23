@@ -11,7 +11,7 @@ export const TVSection = ({ videoUrl = "https://commondatastorage.googleapis.com
       <div 
         className="absolute inset-0 bg-center bg-no-repeat bg-contain opacity-10 pointer-events-none"
         style={{
-          backgroundImage: "url('/src/assets/logo-background.svg')"
+          backgroundImage: "url('/public/images/logo-background.svg')"
         }}
       />
       
