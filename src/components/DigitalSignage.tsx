@@ -119,7 +119,7 @@ export const DigitalSignage = ({
             Informativo de Velórios
           </h1>
           <img 
-            src="/images/logo-cortel-branco.svg"
+            src="/public/images/logo-cortel-branco.svg"
             alt="Cortel São Paulo"
             className="w-[clamp(200px,20vw,400px)] h-auto object-contain"
           />
@@ -136,7 +136,6 @@ export const DigitalSignage = ({
           <div className="flex flex-col">
             <div 
               className="flex-1 rounded-[clamp(1rem,3vw,4rem)] overflow-hidden min-h-[40vh]"
-              style={{ backgroundColor: '#dadfea' }}
             >
               <TVSection videoUrl={videoUrl} />
             </div>
@@ -147,7 +146,7 @@ export const DigitalSignage = ({
                 TV CORTEL
               </h2>
               <img 
-                src="/images/logo-parceiros.svg"
+                src="/public/images/logo-parceiros.svg"
                 alt="Parceiros"
                 className="w-[clamp(200px,25vw,500px)] h-auto object-contain"
               />

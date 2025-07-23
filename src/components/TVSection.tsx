@@ -16,7 +16,7 @@ export const TVSection = ({ videoUrl = "https://commondatastorage.googleapis.com
       />
       
       {/* Video Player - Full container */}
-      <div className="relative z-10 w-full h-full p-3 md:p-6">
+      <div className="relative z-10 w-full h-full">
         <VideoPlayer 
           videoUrl={videoUrl}
           className="w-full h-full"
