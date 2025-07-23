@@ -24,7 +24,7 @@ export const FuneralCard = ({ funeral, className, style }: FuneralCardProps) => 
   return (
     <div
       className={cn(
-        "w-full h-full rounded-[clamp(0.5rem,1.5vw,2rem)] p-[clamp(0.75rem,1.5vw,2rem)] transition-all duration-1000",
+        "w-full h-full rounded-2xl p-3 transition-all duration-1000",
         className
       )}
       style={{
@@ -34,7 +34,7 @@ export const FuneralCard = ({ funeral, className, style }: FuneralCardProps) => 
     >
       {/* Nome do falecido - Responsive */}
       <h3 
-        className="font-lato font-black text-[clamp(1rem,1.8vw,2.5rem)] leading-tight mb-[clamp(0.25rem,0.5vh,0.5rem)]"
+        className="font-lato font-black text-base md:text-lg xl:text-[20px] leading-tight mb-1"
         style={{ 
           color: '#042453'
         }}
@@ -43,9 +43,9 @@ export const FuneralCard = ({ funeral, className, style }: FuneralCardProps) => 
       </h3>
       
       {/* Sala - Responsive */}
-      <div className="mb-[clamp(0.25rem,0.5vh,0.5rem)]">
+      <div className="mb-1">
         <span 
-          className="font-lato font-black text-[clamp(0.75rem,1.2vw,1.5rem)]"
+          className="font-lato font-black text-sm md:text-base xl:text-[16px]"
           style={{ 
             color: '#042453'
           }}
@@ -56,7 +56,7 @@ export const FuneralCard = ({ funeral, className, style }: FuneralCardProps) => 
       
       {/* Data e horário - Responsive */}
       <p 
-        className="font-lato font-black text-[clamp(0.625rem,1vw,1.25rem)] mb-[clamp(0.25rem,0.5vh,0.5rem)]"
+        className="font-lato font-black text-xs md:text-sm xl:text-[14px] mb-1"
         style={{ 
           color: '#042453'
         }}
@@ -66,7 +66,7 @@ export const FuneralCard = ({ funeral, className, style }: FuneralCardProps) => 
       
       {/* Local de sepultamento - Responsive */}
       <p 
-        className="font-lato font-black text-[clamp(0.625rem,1vw,1.25rem)] leading-tight overflow-hidden"
+        className="font-lato font-black text-xs md:text-sm xl:text-[14px] leading-tight overflow-hidden"
         style={{ 
           color: '#042453',
           display: '-webkit-box',
