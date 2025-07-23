@@ -195,7 +195,6 @@ export const DigitalSignage = ({
           <div className="order-1 lg:order-2">
             <div 
               className="w-full h-full rounded-3xl overflow-hidden"
-              style={{ backgroundColor: '#dadfea' }}
             >
               <TVSection videoUrl={videoUrl} />
             </div>
