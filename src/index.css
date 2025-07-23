@@ -1,0 +1,300 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Cortel São Paulo Digital Signage Design System */
+
+@layer base {
+  :root {
+    /* Cortel Brand Colors */
+    --cortel-blue-dark: 202 84% 24%;  /* #004A7C */
+    --cortel-blue-medium: 201 100% 35%; /* #0077B6 */
+    --cortel-blue-light: 195 100% 50%; /* #00A8E6 */
+    
+    /* Background & Surfaces */
+    --background: var(--cortel-blue-medium);
+    --foreground: 0 0% 100%;
+    
+    --card: 202 84% 24%;
+    --card-foreground: 0 0% 100%;
+    
+    --card-funeral: 202 84% 20%;
+    --card-funeral-foreground: 0 0% 100%;
+    
+    --card-video: 0 0% 98%;
+    --card-video-foreground: 202 84% 24%;
+    
+    /* Interactive Elements */
+    --primary: var(--cortel-blue-dark);
+    --primary-foreground: 0 0% 100%;
+    
+    --secondary: 0 0% 100%;
+    --secondary-foreground: var(--cortel-blue-dark);
+    
+    --accent: var(--cortel-blue-light);
+    --accent-foreground: 0 0% 100%;
+    
+    /* Gradients */
+    --gradient-main: linear-gradient(135deg, hsl(var(--cortel-blue-dark)), hsl(var(--cortel-blue-medium)));
+    --gradient-animated: linear-gradient(135deg, hsl(var(--cortel-blue-dark)), hsl(var(--cortel-blue-medium)), hsl(var(--cortel-blue-light)));
+    
+    /* Shadows */
+    --shadow-card: 0 4px 20px hsl(var(--cortel-blue-dark) / 0.3);
+    --shadow-video: 0 8px 32px hsl(var(--cortel-blue-dark) / 0.4);
+    
+    /* Animation */
+    --transition-smooth: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    
+    /* Spacing for TV Display */
+    --tv-padding: 3rem;
+    --card-gap: 1.5rem;
+    
+    /* Border Radius */
+    --radius-card: 1rem;
+    --radius-video: 1.5rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+/* Global styles and animations - TV Optimized */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100vh;
+  width: 100vw;
+  overflow-x: hidden;
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+
+body {
+  @apply bg-background text-foreground;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  overflow-y: auto;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  html, body {
+    /* Prevent zoom on mobile */
+    -webkit-text-size-adjust: 100%;
+    /* Improve touch performance */
+    touch-action: manipulation;
+  }
+  
+  /* Optimize performance on mobile */
+  * {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
+
+/* Frame4 Based Gradient Background */
+.bg-gradient-animated {
+  background: linear-gradient(90deg, #1e3a8a 0%, #3b82f6 50%, #60a5fa 100%);
+  background-size: 300% 100%;
+  animation: gradient-horizontal 12s ease-in-out infinite;
+  position: relative;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+
+.bg-gradient-animated::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 15% 25%, rgba(255, 255, 255, 0.08) 0%, transparent 35%),
+    radial-gradient(circle at 85% 75%, rgba(255, 255, 255, 0.06) 0%, transparent 40%),
+    radial-gradient(circle at 45% 60%, rgba(255, 255, 255, 0.04) 0%, transparent 30%),
+    radial-gradient(circle at 75% 25%, rgba(255, 255, 255, 0.05) 0%, transparent 25%);
+  animation: geometric-float 25s linear infinite;
+  pointer-events: none;
+}
+
+/* Reflection/Illumination Effect */
+.bg-reflection::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(ellipse at 20% 30%, rgba(255, 255, 255, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 70%, rgba(255, 255, 255, 0.08) 0%, transparent 40%),
+    linear-gradient(45deg, transparent 40%, rgba(255, 255, 255, 0.03) 50%, transparent 60%);
+  animation: reflection-float 20s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes gradient-horizontal {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes geometric-float {
+  0% {
+    transform: translateX(-10px);
+  }
+  100% {
+    transform: translateX(calc(100vw + 10px));
+  }
+}
+
+@keyframes reflection-float {
+  0%, 100% {
+    opacity: 0.6;
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translateY(-5px) scale(1.02);
+  }
+}
+
+/* Subtle shimmer effect - clean illumination */
+@keyframes shimmer-subtle {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: translateX(100vw);
+    opacity: 0;
+  }
+}
+
+.animate-shimmer-subtle {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.1) 20%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.1) 80%,
+    transparent 100%
+  );
+  animation: shimmer-subtle 8s ease-in-out infinite;
+  animation-delay: 2s;
+}
+
+/* Responsive shimmer for mobile devices */
+@media (max-width: 768px) {
+  .animate-shimmer-subtle {
+    animation-duration: 6s;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.08) 20%,
+      rgba(255, 255, 255, 0.15) 50%,
+      rgba(255, 255, 255, 0.08) 80%,
+      transparent 100%
+    );
+  }
+}
+
+/* Safe Zone Carousel Animations */
+@keyframes fade-slide-in {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-slide-out {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+.animate-slide-up-smooth {
+  animation: slide-up-smooth 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.animate-slide-in-smooth {
+  animation: slide-in-smooth 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
