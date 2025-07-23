@@ -119,7 +119,7 @@ export const DigitalSignage = ({
             Informativo de Velórios
           </h1>
           <img 
-            src="/public/images/logo-cortel-branco.svg"
+            src="/images/logo-cortel-branco.svg"
             alt="Cortel São Paulo"
             className="w-[clamp(200px,20vw,400px)] h-auto object-contain"
           />
@@ -147,7 +147,7 @@ export const DigitalSignage = ({
                 TV CORTEL
               </h2>
               <img 
-                src="/public/images/logo-parceiros.svg"
+                src="/images/logo-parceiros.svg"
                 alt="Parceiros"
                 className="w-[clamp(200px,25vw,500px)] h-auto object-contain"
               />
