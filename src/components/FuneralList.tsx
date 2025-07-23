@@ -27,6 +27,16 @@ export const FuneralList = ({ funerals }: FuneralListProps) => {
     { top: '865px', left: '161px', width: '374px', height: '119px' }
   ];
 
+  // Card positions for 4K (3840x2160) - 6 cards (doubled dimensions)
+  const desktop4KCardPositions = [
+    { top: '380px', left: '322px', width: '748px', height: '238px' },
+    { top: '650px', left: '322px', width: '748px', height: '238px' },
+    { top: '920px', left: '322px', width: '748px', height: '238px' },
+    { top: '1190px', left: '322px', width: '748px', height: '238px' },
+    { top: '1460px', left: '322px', width: '748px', height: '238px' },
+    { top: '1730px', left: '322px', width: '748px', height: '238px' }
+  ];
+
   useEffect(() => {
     if (funerals.length === 0) {
       setVisibleCards([]);
@@ -94,7 +104,8 @@ export const FuneralList = ({ funerals }: FuneralListProps) => {
       <div className="hidden xl:block">
         {visibleCards.map((funeral, index) => {
           const position = desktopCardPositions[index];
-          if (!position) return null;
+          const position4K = desktop4KCardPositions[index];
+          if (!position || !position4K) return null;
 
           return (
             <div
@@ -107,7 +118,28 @@ export const FuneralList = ({ funerals }: FuneralListProps) => {
                 height: position.height,
               }}
             >
-              <FuneralCard funeral={funeral} />
+              <div 
+                className="2xl:hidden"
+                style={{
+                  top: position.top,
+                  left: position.left,
+                  width: position.width,
+                  height: position.height,
+                }}
+              >
+                <FuneralCard funeral={funeral} />
+              </div>
+              <div 
+                className="hidden 2xl:block absolute"
+                style={{
+                  top: position4K.top,
+                  left: position4K.left,
+                  width: position4K.width,
+                  height: position4K.height,
+                }}
+              >
+                <FuneralCard funeral={funeral} />
+              </div>
             </div>
           );
         })}

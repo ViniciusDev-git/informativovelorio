@@ -117,16 +117,16 @@ export const DigitalSignage = ({
       <div className="absolute inset-0 animate-shimmer-subtle pointer-events-none"></div>
       
       {/* Desktop Layout (1920x1080) */}
-      <div className="hidden xl:block relative w-[1920px] h-[1080px] mx-auto">
+      <div className="hidden xl:block relative w-[1920px] h-[1080px] mx-auto 2xl:w-[3840px] 2xl:h-[2160px]">
         {/* Título Principal - Desktop Position */}
-        <div className="absolute top-[60px] left-[161px]">
-          <h1 className="text-white font-lato font-black text-[74px] leading-none">
+        <div className="absolute top-[60px] left-[161px] 2xl:top-[120px] 2xl:left-[322px]">
+          <h1 className="text-white font-lato font-black text-[74px] leading-none 2xl:text-[148px]">
             Informativo de Velórios
           </h1>
         </div>
 
         {/* Logo Cortel - Desktop Position */}
-        <div className="absolute top-[37px] left-[1165px] w-[397px] h-[130px]">
+        <div className="absolute top-[37px] left-[1165px] w-[397px] h-[130px] 2xl:top-[74px] 2xl:left-[2330px] 2xl:w-[794px] 2xl:h-[260px]">
           <img 
             src="/src/assets/logo-cortel-branco.svg"
             alt="Cortel São Paulo"
@@ -138,9 +138,9 @@ export const DigitalSignage = ({
         <FuneralList funerals={activeFunerals} />
 
         {/* Main Video Panel - Desktop Position */}
-        <div className="absolute top-[190px] left-[970px] w-[788px] h-[702px]">
+        <div className="absolute top-[190px] left-[970px] w-[788px] h-[702px] 2xl:top-[380px] 2xl:left-[1940px] 2xl:w-[1576px] 2xl:h-[1404px]">
           <div 
-            className="w-full h-full rounded-[65px] overflow-hidden"
+            className="w-full h-full rounded-[65px] overflow-hidden 2xl:rounded-[130px]"
             style={{ backgroundColor: '#dadfea' }}
           >
             <TVSection videoUrl={videoUrl} />
@@ -148,21 +148,21 @@ export const DigitalSignage = ({
         </div>
 
        {/* TV Cortel Footer Section - Desktop Position */}
-<div className="absolute top-[905px] left-[970px] w-[788px] flex flex-col items-center justify-center space-y-1">
-  <h2 className="text-white font-lato font-black text-[32px]">
+<div className="absolute top-[905px] left-[970px] w-[788px] flex flex-col items-center justify-center space-y-1 2xl:top-[1810px] 2xl:left-[1940px] 2xl:w-[1576px] 2xl:space-y-2">
+  <h2 className="text-white font-lato font-black text-[32px] 2xl:text-[64px]">
     TV CORTEL
   </h2>
   
   <img 
     src="/src/assets/logo-parceiros.svg"
     alt="Parceiros"
-    className="w-[500px] h-[80px] object-contain"
+    className="w-[500px] h-[80px] object-contain 2xl:w-[1000px] 2xl:h-[160px]"
   />
 </div>
 
         {/* Update indicator - Desktop */}
-        <div className="absolute bottom-[20px] left-[161px]">
-          <p className="text-white/70 text-sm">
+        <div className="absolute bottom-[20px] left-[161px] 2xl:bottom-[40px] 2xl:left-[322px]">
+          <p className="text-white/70 text-sm 2xl:text-xl">
             Atualizado às {lastUpdate.toLocaleTimeString('pt-BR')}
           </p>
         </div>
