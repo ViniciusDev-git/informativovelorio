@@ -34,7 +34,7 @@ export const FuneralCard = ({ funeral, className, style }: FuneralCardProps) => 
     >
       {/* Nome do falecido - Responsive */}
       <h3 
-        className="font-lato font-black text-base md:text-lg xl:text-[20px] leading-tight mb-1"
+        className="font-lato font-black text-base md:text-lg xl:text-[20px] 4k:text-[40px] leading-tight mb-1"
         style={{ 
           color: '#042453'
         }}
@@ -45,7 +45,7 @@ export const FuneralCard = ({ funeral, className, style }: FuneralCardProps) => 
       {/* Sala - Responsive */}
       <div className="mb-1">
         <span 
-          className="font-lato font-black text-sm md:text-base xl:text-[16px]"
+          className="font-lato font-black text-sm md:text-base xl:text-[16px] 4k:text-[32px]"
           style={{ 
             color: '#042453'
           }}
@@ -56,7 +56,7 @@ export const FuneralCard = ({ funeral, className, style }: FuneralCardProps) => 
       
       {/* Data e horário - Responsive */}
       <p 
-        className="font-lato font-black text-xs md:text-sm xl:text-[14px] mb-1"
+        className="font-lato font-black text-xs md:text-sm xl:text-[14px] 4k:text-[28px] mb-1"
         style={{ 
           color: '#042453'
         }}
@@ -66,7 +66,7 @@ export const FuneralCard = ({ funeral, className, style }: FuneralCardProps) => 
       
       {/* Local de sepultamento - Responsive */}
       <p 
-        className="font-lato font-black text-xs md:text-sm xl:text-[14px] leading-tight overflow-hidden"
+        className="font-lato font-black text-xs md:text-sm xl:text-[14px] 4k:text-[28px] leading-tight overflow-hidden"
         style={{ 
           color: '#042453',
           display: '-webkit-box',

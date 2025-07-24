@@ -27,6 +27,16 @@ export const FuneralList = ({ funerals }: FuneralListProps) => {
     { top: '865px', left: '161px', width: '374px', height: '119px' }
   ];
 
+  // Card positions for TV 4K (absolute positioning) - 6 cards (doubled proportions)
+  const tv4kCardPositions = [
+    { top: '380px', left: '322px', width: '748px', height: '238px' },
+    { top: '650px', left: '322px', width: '748px', height: '238px' },
+    { top: '920px', left: '322px', width: '748px', height: '238px' },
+    { top: '1190px', left: '322px', width: '748px', height: '238px' },
+    { top: '1460px', left: '322px', width: '748px', height: '238px' },
+    { top: '1730px', left: '322px', width: '748px', height: '238px' }
+  ];
+
   useEffect(() => {
     if (funerals.length === 0) {
       setVisibleCards([]);
@@ -67,8 +77,17 @@ export const FuneralList = ({ funerals }: FuneralListProps) => {
   if (funerals.length === 0) {
     return (
       <div className="flex items-center justify-center h-full">
+        {/* TV 4K layout */}
+        <div className="hidden 4k:block absolute top-[800px] left-[322px] w-[748px] h-[400px]">
+          <div className="bg-white/20 backdrop-blur-sm rounded-3xl p-12 text-center">
+            <p className="text-white font-lato font-black text-4xl">
+              Nenhum velório acontecendo
+            </p>
+          </div>
+        </div>
+        
         {/* Desktop layout */}
-        <div className="hidden xl:block absolute top-[400px] left-[161px] w-[374px] h-[200px]">
+        <div className="hidden xl:block 4k:hidden absolute top-[400px] left-[161px] w-[374px] h-[200px]">
           <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-6 text-center">
             <p className="text-white font-lato font-black text-xl">
               Nenhum velório acontecendo
@@ -90,8 +109,31 @@ export const FuneralList = ({ funerals }: FuneralListProps) => {
 
   return (
     <>
+      {/* TV 4K Layout - Absolute Positioning */}
+      <div className="hidden 4k:block">
+        {visibleCards.map((funeral, index) => {
+          const position = tv4kCardPositions[index];
+          if (!position) return null;
+
+          return (
+            <div
+              key={`4k-${funeral.nome}-${index}`}
+              className="absolute transition-all duration-1000 ease-in-out"
+              style={{
+                top: position.top,
+                left: position.left,
+                width: position.width,
+                height: position.height,
+              }}
+            >
+              <FuneralCard funeral={funeral} />
+            </div>
+          );
+        })}
+      </div>
+
       {/* Desktop Layout - Absolute Positioning */}
-      <div className="hidden xl:block">
+      <div className="hidden xl:block 4k:hidden">
         {visibleCards.map((funeral, index) => {
           const position = desktopCardPositions[index];
           if (!position) return null;

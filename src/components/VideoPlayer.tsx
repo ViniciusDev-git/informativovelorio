@@ -40,17 +40,19 @@ export const VideoPlayer = ({ videoUrl, className }: VideoPlayerProps) => {
   }, [videoUrl]);
 
   return (
-    <div className="relative w-full h-full bg-gray-900 rounded-2xl overflow-hidden">
+    <div className="relative w-full h-full rounded-2xl overflow-hidden flex items-center justify-center">
       <video
         ref={videoRef}
-        className={`w-full h-full object-cover relative z-10 ${className}`}
+        className={`relative z-10 ${className}`}
         muted
         loop
         autoPlay
         playsInline
-        preload="auto" // Mantido 'auto' aqui também
+        preload="auto"
         style={{
-          objectFit: 'cover',
+          width: '100%',
+          height: '100%',
+          objectFit: 'scale-down',
           objectPosition: 'center'
         }}
         onError={(e) => {

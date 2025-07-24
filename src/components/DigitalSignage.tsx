@@ -116,8 +116,61 @@ export const DigitalSignage = ({
       {/* Subtle shimmer effect */}
       <div className="absolute inset-0 animate-shimmer-subtle pointer-events-none"></div>
       
+      {/* TV 4K Layout (3840x2160) */}
+      <div className="hidden 4k:block relative w-[3840px] h-[2160px] mx-auto scale-100">
+        {/* Título Principal - TV 4K Position */}
+        <div className="absolute top-[120px] left-[322px]">
+          <h1 className="text-white font-lato font-black text-[148px] leading-none">
+            Informativo de Velórios
+          </h1>
+        </div>
+
+        {/* Logo Cortel - TV 4K Position */}
+        <div className="absolute top-[74px] left-[2330px] w-[794px] h-[260px]">
+          <img 
+            src="/images/logo-cortel-branco.svg"
+            alt="Cortel São Paulo"
+            className="w-full h-full object-contain"
+          />
+        </div>
+
+        {/* Funeral Cards Container - TV 4K */}
+        <div className="absolute top-[380px] left-[161px] w-[1600px] h-[1404px]">
+          <FuneralList funerals={activeFunerals} />
+        </div>
+
+        {/* Main Video Panel - TV 4K Position */}
+        <div className="absolute top-[380px] left-[1940px] w-[1576px] h-[1404px]">
+          <div 
+            className="w-full h-full rounded-[130px] overflow-hidden"
+          >
+            <TVSection videoUrl={videoUrl} />
+          </div>
+        </div>
+
+        {/* TV Cortel Footer Section - TV 4K Position */}
+        <div className="absolute top-[1810px] left-[1940px] w-[1576px] flex flex-col items-center justify-center space-y-2">
+          <h2 className="text-white font-lato font-black text-[56px]">
+            TV CORTEL
+          </h2>
+          
+          <img 
+            src="/images/logo-parceiros.svg"
+            alt="Parceiros"
+            className="w-[1000px] h-[160px] object-contain"
+          />
+        </div>
+
+        {/* Update indicator - TV 4K */}
+        <div className="absolute bottom-[40px] left-[322px]">
+          <p className="text-white/70 text-[28px]">
+            Atualizado às {lastUpdate.toLocaleTimeString('pt-BR')}
+          </p>
+        </div>
+      </div>
+      
       {/* Desktop Layout (1920x1080) */}
-      <div className="hidden xl:block relative w-[1920px] h-[1080px] mx-auto">
+      <div className="hidden xl:block 4k:hidden relative w-[1920px] h-[1080px] mx-auto">
         {/* Título Principal - Desktop Position */}
         <div className="absolute top-[60px] left-[161px]">
           <h1 className="text-white font-lato font-black text-[74px] leading-none">
@@ -141,7 +194,6 @@ export const DigitalSignage = ({
         <div className="absolute top-[190px] left-[970px] w-[788px] h-[702px]">
           <div 
             className="w-full h-full rounded-[65px] overflow-hidden"
-            style={{ backgroundColor: '#dadfea' }}
           >
             <TVSection videoUrl={videoUrl} />
           </div>
@@ -237,7 +289,6 @@ export const DigitalSignage = ({
         <div className="mb-6">
           <div 
             className="w-full aspect-video rounded-2xl overflow-hidden"
-            style={{ backgroundColor: '#dadfea' }}
           >
             <TVSection videoUrl={videoUrl} />
           </div>

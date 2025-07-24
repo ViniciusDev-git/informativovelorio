@@ -23,6 +23,7 @@ export default {
 			'lg': '1024px',
 			'xl': '1280px',
 			'2xl': '1920px', // Para displays de sinalização digital
+			'4k': '3840px', // Para TVs 4K
 		},
 		extend: {
 			colors: {
