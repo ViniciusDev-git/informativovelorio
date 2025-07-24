@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+mport { useEffect, useRef, useState } from "react";
 
 interface VideoPlayerProps {
   videoUrl: string;
