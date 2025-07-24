@@ -12,26 +12,35 @@ export const VideoPlayer = ({ videoUrl, className }: VideoPlayerProps) => {
     const video = videoRef.current;
     if (!video) return;
 
+    // Configurações para máxima compatibilidade
+    video.muted = true;
+    video.loop = true;
+    video.playsInline = true;
+    video.autoplay = true;
+
     // Tenta iniciar o vídeo automaticamente
     const playPromise = video.play();
 
     if (playPromise !== undefined) {
       playPromise.then(() => {
-        // Autoplay iniciado com sucesso
         console.log("Vídeo iniciado automaticamente.");
       }).catch(error => {
-        // Autoplay bloqueado, o usuário precisará interagir
         console.warn("Autoplay bloqueado pelo navegador:", error);
         
-        // Adiciona um listener para iniciar o vídeo na primeira interação do usuário
+        // Adiciona listeners para múltiplos tipos de interação
         const handleUserInteraction = () => {
-          video.play();
+          video.play().catch(console.error);
+          // Remove todos os listeners após a primeira interação
           document.removeEventListener('click', handleUserInteraction);
           document.removeEventListener('touchstart', handleUserInteraction);
+          document.removeEventListener('keydown', handleUserInteraction);
+          document.removeEventListener('scroll', handleUserInteraction);
         };
         
         document.addEventListener('click', handleUserInteraction);
         document.addEventListener('touchstart', handleUserInteraction);
+        document.addEventListener('keydown', handleUserInteraction);
+        document.addEventListener('scroll', handleUserInteraction);
       });
     }
 
@@ -54,10 +63,15 @@ export const VideoPlayer = ({ videoUrl, className }: VideoPlayerProps) => {
         autoPlay
         playsInline
         preload="auto"
+        // Atributos adicionais para compatibilidade com diferentes navegadores
+        webkit-playsinline="true"
+        x5-playsinline="true"
         style={{
           objectFit: 'scale-down',
           objectPosition: 'center',
-          backgroundColor: 'transparent'
+          backgroundColor: 'transparent',
+          width: '100%',
+          height: '100%'
         }}
       >
         <source src={videoUrl} type="video/mp4" />
