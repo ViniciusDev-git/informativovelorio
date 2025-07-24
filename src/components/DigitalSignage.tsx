@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { FuneralList } from "./FuneralList";
 import { TVSection } from "./TVSection";
-import { VideoControls, VideoConfig } from "./VideoControls";
 import { useFuneralFilter } from "../hooks/useFuneralFilter";
 
 interface FuneralData {
@@ -84,12 +83,7 @@ export const DigitalSignage = ({
 }: DigitalSignageProps) => {
   const [funerals, setFunerals] = useState<FuneralData[]>(mockFunerals);
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
-  const [videoConfig, setVideoConfig] = useState<VideoConfig>({
-    width: '100%',
-    height: '100%',
-    objectFit: 'cover',
-    objectPosition: 'center'
-  });
+
   const { activeFunerals, expiredCount } = useFuneralFilter(funerals);
 
   // Simulate data fetching from Google Sheets
@@ -146,17 +140,17 @@ export const DigitalSignage = ({
           <FuneralList funerals={activeFunerals} />
         </div>
 
-        {/* Main Video Panel - TV 4K Position */}
-        <div className="absolute top-[380px] left-[1940px] w-[1576px] h-[1404px]">
+        {/* Main Video Panel - TV 4K Position - AUMENTADO */}
+        <div className="absolute top-[320px] left-[1880px] w-[1696px] h-[1524px]">
           <div 
             className="w-full h-full rounded-[130px] overflow-hidden"
           >
-            <TVSection videoUrl={videoUrl} videoConfig={videoConfig} />
+            <TVSection videoUrl={videoUrl} />
           </div>
         </div>
 
-        {/* TV Cortel Footer Section - TV 4K Position */}
-        <div className="absolute top-[1810px] left-[1940px] w-[1576px] flex flex-col items-center justify-center space-y-2">
+        {/* TV Cortel Footer Section - TV 4K Position - AJUSTADO */}
+        <div className="absolute top-[1870px] left-[1880px] w-[1696px] flex flex-col items-center justify-center space-y-2">
           <h2 className="text-white font-lato font-black text-[56px]">
             TV CORTEL
           </h2>
@@ -202,7 +196,7 @@ export const DigitalSignage = ({
           <div 
             className="w-full h-full rounded-[65px] overflow-hidden"
           >
-            <TVSection videoUrl={videoUrl} videoConfig={videoConfig} />
+            <TVSection videoUrl={videoUrl} />
           </div>
         </div>
 
@@ -255,7 +249,7 @@ export const DigitalSignage = ({
             <div 
               className="w-full h-full rounded-3xl overflow-hidden"
             >
-              <TVSection videoUrl={videoUrl} videoConfig={videoConfig} />
+              <TVSection videoUrl={videoUrl} />
             </div>
           </div>
         </div>
@@ -297,7 +291,7 @@ export const DigitalSignage = ({
           <div 
             className="w-full aspect-video rounded-2xl overflow-hidden"
           >
-            <TVSection videoUrl={videoUrl} videoConfig={videoConfig} />
+            <TVSection videoUrl={videoUrl} />
           </div>
         </div>
 
@@ -324,11 +318,7 @@ export const DigitalSignage = ({
         </div>
       </div>
 
-      {/* Controles do Vídeo */}
-      <VideoControls
-        onVideoConfigChange={setVideoConfig}
-        initialConfig={videoConfig}
-      />
+
     </div>
   );
 };

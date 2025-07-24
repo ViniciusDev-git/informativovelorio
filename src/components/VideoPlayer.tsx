@@ -248,7 +248,7 @@ export const VideoPlayer = ({ videoUrl, className }: VideoPlayerProps) => {
       {/* Vídeo principal */}
       <video
         ref={videoRef}
-        className={`${className} w-full h-full object-cover`}
+        className={`${className} w-full h-full`}
         muted
         loop
         autoPlay
