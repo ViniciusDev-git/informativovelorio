@@ -77,6 +77,30 @@ const mockFunerals: FuneralData[] = [
   }
 ];
 
+// Detecção robusta de Smart TV
+const detectSmartTV = () => {
+  const userAgent = navigator.userAgent.toLowerCase();
+  const screenWidth = window.innerWidth;
+  const screenHeight = window.innerHeight;
+  
+  // Verificações de User Agent para Smart TVs
+  const tvUserAgents = [
+    'smart-tv', 'smarttv', 'tv', 'webos', 'tizen', 
+    'netcast', 'hbbtv', 'ce-html', 'opera tv'
+  ];
+  
+  const isTVUserAgent = tvUserAgents.some(agent => userAgent.includes(agent));
+  
+  // Verificação de resolução (4K ou similar)
+  const is4K = screenWidth >= 3840 || screenHeight >= 2160;
+  
+  // Verificação de proporção típica de TV
+  const aspectRatio = screenWidth / screenHeight;
+  const isTVAspectRatio = aspectRatio >= 1.7 && aspectRatio <= 1.8; // 16:9 aproximadamente
+  
+  return isTVUserAgent || (is4K && isTVAspectRatio);
+};
+
 export const DigitalSignage = ({ 
   videoUrl = "/videos/video3.mp4",
   sheetsUrl 
@@ -84,40 +108,52 @@ export const DigitalSignage = ({
   const [funerals, setFunerals] = useState<FuneralData[]>(mockFunerals);
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
   const { activeFunerals, expiredCount } = useFuneralFilter(funerals);
-
-  // Detectar se é uma tela grande (4K ou similar)
-  const [isLargeScreen, setIsLargeScreen] = useState(false);
+  
+  // Detecção mais robusta de Smart TV
+  const [isSmartTV, setIsSmartTV] = useState(false);
+  const [screenInfo, setScreenInfo] = useState({
+    width: 0,
+    height: 0,
+    ratio: 0
+  });
 
   useEffect(() => {
-    const checkScreenSize = () => {
-      setIsLargeScreen(window.innerWidth >= 3840 || window.innerHeight >= 2160);
+    const updateScreenInfo = () => {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      const ratio = width / height;
+      
+      setScreenInfo({ width, height, ratio });
+      setIsSmartTV(detectSmartTV());
+      
+      // Log para debug
+      console.log('Screen Detection:', {
+        width,
+        height,
+        ratio: ratio.toFixed(2),
+        userAgent: navigator.userAgent,
+        isSmartTV: detectSmartTV()
+      });
     };
 
-    checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
+    updateScreenInfo();
+    window.addEventListener('resize', updateScreenInfo);
     
-    return () => window.removeEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', updateScreenInfo);
   }, []);
 
   // Simulate data fetching from Google Sheets
   useEffect(() => {
     const fetchFuneralData = async () => {
       try {
-        // Here you would implement the Google Sheets API integration
-        // For now, we're using mock data
         console.log("Fetching funeral data from:", sheetsUrl || "mock data");
-        
-        // Update timestamp
         setLastUpdate(new Date());
       } catch (error) {
         console.error("Error fetching funeral data:", error);
       }
     };
 
-    // Initial fetch
     fetchFuneralData();
-
-    // Set up interval for real-time updates (every 2 minutes)
     const interval = setInterval(fetchFuneralData, 2 * 60 * 1000);
 
     return () => clearInterval(interval);
@@ -130,10 +166,10 @@ export const DigitalSignage = ({
       {/* Subtle shimmer effect */}
       <div className="absolute inset-0 animate-shimmer-subtle pointer-events-none"></div>
       
-      {/* TV 4K Layout (3840x2160) - Versão Melhorada */}
-      {isLargeScreen && (
+      {/* Smart TV Layout (4K) - Versão Otimizada */}
+      {isSmartTV && (
         <div className="relative w-full h-screen flex flex-col" style={{ minHeight: '2160px' }}>
-          {/* Header Section - TV 4K */}
+          {/* Header Section - Smart TV */}
           <div className="flex justify-between items-start p-16 pt-20">
             <div className="flex-1">
               <h1 className="text-white font-lato font-black text-[148px] leading-none">
@@ -149,33 +185,38 @@ export const DigitalSignage = ({
             </div>
           </div>
 
-          {/* Content Section - TV 4K */}
+          {/* Content Section - Smart TV */}
           <div className="flex-1 flex px-16 gap-16">
-            {/* Funeral Cards Container - TV 4K */}
+            {/* Funeral Cards Container - Smart TV */}
             <div className="w-[1600px] flex-shrink-0">
               <FuneralList funerals={activeFunerals} />
             </div>
 
-            {/* Main Video Panel - TV 4K */}
+            {/* Main Video Panel - Smart TV */}
             <div className="flex-1 min-h-[1400px]">
               <div 
-                className="w-full h-full rounded-[130px] overflow-hidden"
-                style={{ 
-                  backgroundColor: 'rgba(255, 0, 0, 0.1)', // Background temporário para debug
-                  minHeight: '1400px'
-                }}
+                className="w-full h-full rounded-[130px] overflow-hidden bg-black/10"
+                style={{ minHeight: '1400px' }}
               >
                 <TVSection videoUrl={videoUrl} />
               </div>
             </div>
           </div>
 
-          {/* Footer Section - TV 4K */}
+          {/* Footer Section - Smart TV */}
           <div className="px-16 pb-16">
             <div className="flex justify-between items-end">
-              <p className="text-white/70 text-[28px]">
-                Atualizado às {lastUpdate.toLocaleTimeString('pt-BR')}
-              </p>
+              <div>
+                <p className="text-white/70 text-[28px]">
+                  Atualizado às {lastUpdate.toLocaleTimeString('pt-BR')}
+                </p>
+                {/* Debug info para desenvolvimento */}
+                {process.env.NODE_ENV === 'development' && (
+                  <p className="text-white/50 text-[20px] mt-2">
+                    Smart TV: {screenInfo.width}x{screenInfo.height} (Ratio: {screenInfo.ratio.toFixed(2)})
+                  </p>
+                )}
+              </div>
               <div className="flex flex-col items-center space-y-2">
                 <h2 className="text-white font-lato font-black text-[56px]">
                   TV CORTEL
@@ -191,8 +232,8 @@ export const DigitalSignage = ({
         </div>
       )}
       
-      {/* Desktop Layout (1920x1080) - Fallback para telas menores */}
-      {!isLargeScreen && (
+      {/* Desktop Layout (1920x1080) - Para telas não-TV */}
+      {!isSmartTV && (
         <div className="hidden xl:block relative w-[1920px] h-[1080px] mx-auto">
           {/* Título Principal - Desktop Position */}
           <div className="absolute top-[60px] left-[161px]">
@@ -215,9 +256,7 @@ export const DigitalSignage = ({
 
           {/* Main Video Panel - Desktop Position */}
           <div className="absolute top-[190px] left-[970px] w-[788px] h-[702px]">
-            <div 
-              className="w-full h-full rounded-[65px] overflow-hidden"
-            >
+            <div className="w-full h-full rounded-[65px] overflow-hidden">
               <TVSection videoUrl={videoUrl} />
             </div>
           </div>
@@ -227,7 +266,6 @@ export const DigitalSignage = ({
             <h2 className="text-white font-lato font-black text-[28px]">
               TV CORTEL
             </h2>
-            
             <img 
               src="/images/logo-parceiros.svg"
               alt="Parceiros"
@@ -240,13 +278,18 @@ export const DigitalSignage = ({
             <p className="text-white/70 text-sm">
               Atualizado às {lastUpdate.toLocaleTimeString('pt-BR')}
             </p>
+            {/* Debug info para desenvolvimento */}
+            {process.env.NODE_ENV === 'development' && (
+              <p className="text-white/50 text-xs mt-1">
+                Desktop: {screenInfo.width}x{screenInfo.height}
+              </p>
+            )}
           </div>
         </div>
       )}
 
       {/* Tablet Layout */}
       <div className="hidden md:block xl:hidden relative w-full h-screen p-6">
-        {/* Header Section - Tablet */}
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-white font-lato font-black text-4xl lg:text-5xl leading-tight">
             Informativo de<br />Velórios
@@ -258,34 +301,26 @@ export const DigitalSignage = ({
           />
         </div>
 
-        {/* Content Grid - Tablet */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-200px)]">
-          {/* Funeral Cards Section - Tablet */}
           <div className="order-2 lg:order-1">
             <div className="h-full relative">
               <FuneralList funerals={activeFunerals} />
             </div>
           </div>
 
-          {/* Video Section - Tablet */}
           <div className="order-1 lg:order-2">
-            <div 
-              className="w-full h-full rounded-3xl overflow-hidden"
-            >
+            <div className="w-full h-full rounded-3xl overflow-hidden">
               <TVSection videoUrl={videoUrl} />
             </div>
           </div>
         </div>
 
-        {/* Footer - Tablet */}
         <div className="absolute bottom-4 left-6 right-6 flex justify-between items-center">
           <p className="text-white/70 text-sm">
             Atualizado às {lastUpdate.toLocaleTimeString('pt-BR')}
           </p>
           <div className="flex items-center space-x-4">
-            <h2 className="text-white font-lato font-black text-2xl">
-              TV CORTEL
-            </h2>
+            <h2 className="text-white font-lato font-black text-2xl">TV CORTEL</h2>
             <img 
               src="/images/logo-parceiros.svg"
               alt="Parceiros"
@@ -297,7 +332,6 @@ export const DigitalSignage = ({
 
       {/* Mobile Layout */}
       <div className="block md:hidden relative w-full min-h-screen p-4">
-        {/* Header Section - Mobile */}
         <div className="text-center mb-6">
           <img 
             src="/images/logo-cortel-branco.svg"
@@ -309,26 +343,19 @@ export const DigitalSignage = ({
           </h1>
         </div>
 
-        {/* Video Section - Mobile */}
         <div className="mb-6">
-          <div 
-            className="w-full aspect-video rounded-2xl overflow-hidden"
-          >
+          <div className="w-full aspect-video rounded-2xl overflow-hidden">
             <TVSection videoUrl={videoUrl} />
           </div>
         </div>
 
-        {/* Funeral Cards Section - Mobile */}
         <div className="mb-6">
           <FuneralList funerals={activeFunerals} />
         </div>
 
-        {/* Footer - Mobile */}
         <div className="text-center space-y-2">
           <div className="flex items-center justify-center space-x-2">
-            <h2 className="text-white font-lato font-black text-lg">
-              TV CORTEL
-            </h2>
+            <h2 className="text-white font-lato font-black text-lg">TV CORTEL</h2>
             <img 
               src="/images/logo-parceiros.svg"
               alt="Parceiros"
