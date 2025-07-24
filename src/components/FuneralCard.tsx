@@ -1,5 +1,3 @@
-import { cn } from "@/lib/utils";
-
 interface FuneralData {
   nome: string;
   sala: string;
@@ -23,10 +21,7 @@ export const FuneralCard = ({ funeral, className, style }: FuneralCardProps) => 
 
   return (
     <div
-      className={cn(
-        "w-full h-full rounded-2xl p-3 transition-all duration-1000",
-        className
-      )}
+      className={`w-full h-full rounded-2xl p-3 transition-all duration-1000 ${className || ''}`}
       style={{
         backgroundColor: '#dae0ea',
         ...style
@@ -79,3 +74,4 @@ export const FuneralCard = ({ funeral, className, style }: FuneralCardProps) => 
     </div>
   );
 };
+
