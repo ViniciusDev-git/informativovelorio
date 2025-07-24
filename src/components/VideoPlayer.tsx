@@ -12,62 +12,15 @@ enum VideoState {
   ERROR = 'error'
 }
 
-// Detectar Smart TV de forma mais robusta
-const detectSmartTV = () => {
-  const userAgent = navigator.userAgent.toLowerCase();
-  const screenWidth = window.innerWidth;
-  const screenHeight = window.innerHeight;
-  
-  // Verificações de User Agent mais abrangentes
-  const tvUserAgents = [
-    'smart-tv', 'smarttv', 'tv', 'webos', 'tizen', 
-    'netcast', 'hbbtv', 'ce-html', 'opera tv',
-    'samsung', 'lg', 'sony', 'philips'
-  ];
-  
-  const isTVUserAgent = tvUserAgents.some(agent => userAgent.includes(agent));
-  
-  // Verificação de resolução mais flexível
-  const isLargeScreen = screenWidth >= 1920 && screenHeight >= 1080;
-  const isUltraWide = screenWidth >= 3840 || screenHeight >= 2160;
-  
-  // Verificação de proporção mais flexível
-  const aspectRatio = screenWidth / screenHeight;
-  const isTVAspectRatio = aspectRatio >= 1.5 && aspectRatio <= 2.0; // Mais flexível
-  
-  // Detecção por características do ambiente
-  const hasLimitedInputMethods = !('ontouchstart' in window) && 
-                                 navigator.maxTouchPoints === 0;
-  
-  return isTVUserAgent || 
-         (isUltraWide && isTVAspectRatio) || 
-         (isLargeScreen && hasLimitedInputMethods && isTVAspectRatio);
-};
 
-// Obter IP local para Smart TVs
-const getLocalIP = () => {
-  // Para desenvolvimento, usar o IP da máquina ao invés de localhost
-  const hostname = window.location.hostname;
-  if (hostname === 'localhost' || hostname === '127.0.0.1') {
-    // Em produção, isso seria substituído pelo IP real do servidor
-    return window.location.origin;
-  }
-  return window.location.origin;
-};
 
 export const VideoPlayer = ({ videoUrl, className }: VideoPlayerProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoState, setVideoState] = useState<VideoState>(VideoState.LOADING);
-  const [isTV] = useState(detectSmartTV());
   const [retryCount, setRetryCount] = useState(0);
-  const maxRetries = 5; // Mais tentativas para Smart TVs
+  const maxRetries = 5;
   
-  // Ajustar URL do vídeo para Smart TVs
   const getVideoUrl = () => {
-    if (isTV && videoUrl.startsWith('/')) {
-      const baseUrl = getLocalIP();
-      return `${baseUrl}${videoUrl}`;
-    }
     return videoUrl;
   };
 
@@ -75,46 +28,29 @@ export const VideoPlayer = ({ videoUrl, className }: VideoPlayerProps) => {
     const video = videoRef.current;
     if (!video) return;
 
-    console.log('VideoPlayer Init:', {
-      isTV,
+    console.log("VideoPlayer Init:", {
       videoUrl: getVideoUrl(),
       screenSize: `${window.innerWidth}x${window.innerHeight}`,
       userAgent: navigator.userAgent
     });
 
-    // Reset estado
     setVideoState(VideoState.LOADING);
 
-    // Configurações básicas
     video.muted = true;
     video.loop = true;
     video.autoplay = true;
     video.playsInline = true;
-    
-    // Configurações específicas para Smart TV
-    if (isTV) {
-      video.preload = "auto"; // Smart TVs precisam de preload completo
-      video.setAttribute('webkit-playsinline', 'true');
-      video.setAttribute('x5-playsinline', 'true');
-      video.setAttribute('x5-video-player-type', 'h5');
-      video.setAttribute('x5-video-player-fullscreen', 'false');
-      video.setAttribute('playsinline', 'true');
-      
-      // Configurações adicionais para compatibilidade
-      video.crossOrigin = "anonymous";
-      video.controls = false;
-    } else {
-      video.preload = "metadata"; // Desktop usa metadata apenas
-    }
+    video.preload = "auto";
+    video.crossOrigin = "anonymous";
+    video.controls = false;
 
-    // Timeout mais longo para Smart TVs
-    const timeoutDuration = isTV ? 60000 : 20000; // 60s para TV, 20s para desktop
+    const timeoutDuration = 30000;
     let loadTimeout: NodeJS.Timeout;
 
     const startTimeout = () => {
       clearTimeout(loadTimeout);
       loadTimeout = setTimeout(() => {
-        console.warn("Video loading timeout", { isTV, retryCount });
+        console.warn("Video loading timeout", { retryCount });
         if (retryCount < maxRetries) {
           setRetryCount(prev => prev + 1);
         } else {
@@ -129,28 +65,22 @@ export const VideoPlayer = ({ videoUrl, className }: VideoPlayerProps) => {
       }
     };
 
-    // Função de play otimizada
     const attemptPlay = async () => {
       try {
         clearTimeoutSafe();
-        
-        // Para Smart TVs, aguardar um pouco antes de tentar play
-        if (isTV) {
-          await new Promise(resolve => setTimeout(resolve, 500));
-        }
-        
+        await new Promise(resolve => setTimeout(resolve, 500));
         await video.play();
         setVideoState(VideoState.PLAYING);
-        setRetryCount(0); // Reset retry count on success
-        console.log("Video playing successfully", { isTV });
+        setRetryCount(0);
+        console.log("Video playing successfully");
       } catch (error) {
-        console.error("Video play failed:", error, { isTV, retryCount });
+        console.error("Video play failed:", error, { retryCount });
         
         if (retryCount < maxRetries) {
           console.log(`Retrying video playback (${retryCount + 1}/${maxRetries})`);
           setTimeout(() => {
             setRetryCount(prev => prev + 1);
-          }, 2000); // Aguardar 2s antes de retry
+          }, 2000);
         } else {
           setVideoState(VideoState.ERROR);
         }
@@ -159,19 +89,19 @@ export const VideoPlayer = ({ videoUrl, className }: VideoPlayerProps) => {
 
     // Event listeners otimizados
     const handleCanPlay = () => {
-      console.log("Video can play", { isTV, readyState: video.readyState });
+      console.log("Video can play", { readyState: video.readyState });
       attemptPlay();
     };
 
     const handleLoadedData = () => {
-      console.log("Video data loaded", { isTV });
+      console.log("Video data loaded");
       if (video.readyState >= 2) {
         attemptPlay();
       }
     };
 
     const handleError = (e: Event) => {
-      console.error("Video error:", e, { isTV, src: video.src });
+      console.error("Video error:", e, { src: video.src });
       clearTimeoutSafe();
       
       if (retryCount < maxRetries) {
@@ -185,13 +115,13 @@ export const VideoPlayer = ({ videoUrl, className }: VideoPlayerProps) => {
     };
 
     const handleLoadStart = () => {
-      console.log("Video load started", { isTV });
+      console.log("Video load started");
       setVideoState(VideoState.LOADING);
       startTimeout();
     };
 
     const handleWaiting = () => {
-      console.log("Video waiting", { isTV });
+      console.log("Video waiting");
       // Não mudar estado para loading se já estiver playing
       if (videoState !== VideoState.PLAYING) {
         setVideoState(VideoState.LOADING);
@@ -199,7 +129,7 @@ export const VideoPlayer = ({ videoUrl, className }: VideoPlayerProps) => {
     };
 
     const handlePlaying = () => {
-      console.log("Video playing", { isTV });
+      console.log("Video playing");
       clearTimeoutSafe();
       setVideoState(VideoState.PLAYING);
     };
@@ -230,7 +160,7 @@ export const VideoPlayer = ({ videoUrl, className }: VideoPlayerProps) => {
       video.removeEventListener('waiting', handleWaiting);
       video.removeEventListener('playing', handlePlaying);
     };
-  }, [videoUrl, isTV, retryCount]);
+  }, [videoUrl, retryCount]);
 
   // Função de retry manual
   const handleRetry = () => {
@@ -253,7 +183,7 @@ export const VideoPlayer = ({ videoUrl, className }: VideoPlayerProps) => {
         loop
         autoPlay
         playsInline
-        preload={isTV ? "auto" : "metadata"}
+        preload="auto"
         style={{
           objectFit: 'scale-down',
           objectPosition: 'center',
@@ -273,7 +203,7 @@ export const VideoPlayer = ({ videoUrl, className }: VideoPlayerProps) => {
             <div className="w-12 h-12 md:w-16 md:h-16 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
             <p className="text-lg md:text-2xl font-medium mb-2">Carregando vídeo...</p>
             <p className="text-sm md:text-base text-white/80">
-              {isTV ? "Otimizando para Smart TV..." : "Aguarde um momento..."}
+              Carregando vídeo...
             </p>
             {retryCount > 0 && (
               <p className="text-xs md:text-sm text-white/60 mt-2">
@@ -295,7 +225,7 @@ export const VideoPlayer = ({ videoUrl, className }: VideoPlayerProps) => {
             </div>
             <p className="text-lg md:text-2xl font-medium mb-2">Erro ao carregar vídeo</p>
             <p className="text-sm md:text-base text-white/80 mb-4">
-              {isTV ? "Verifique a conexão da Smart TV" : "Verifique sua conexão de rede"}
+              Verifique sua conexão de rede.
             </p>
             <button 
               onClick={handleRetry}
@@ -311,7 +241,6 @@ export const VideoPlayer = ({ videoUrl, className }: VideoPlayerProps) => {
       {process.env.NODE_ENV === 'development' && (
         <div className="absolute top-2 left-2 bg-black/70 text-white text-xs p-2 rounded z-50 max-w-xs">
           <div>Estado: {videoState}</div>
-          <div>Smart TV: {isTV ? 'Sim' : 'Não'}</div>
           <div>Retry: {retryCount}/{maxRetries}</div>
           <div>URL: {getVideoUrl()}</div>
           <div>Tela: {window.innerWidth}x{window.innerHeight}</div>

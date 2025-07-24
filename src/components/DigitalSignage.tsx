@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { FuneralList } from "./FuneralList";
 import { TVSection } from "./TVSection";
-import { useFuneralFilter } from "../hooks/useFuneralFilter";
 
 interface FuneralData {
   nome: string;
@@ -140,8 +139,8 @@ export const DigitalSignage = ({
           <FuneralList funerals={activeFunerals} />
         </div>
 
-        {/* Main Video Panel - TV 4K Position - AUMENTADO */}
-        <div className="absolute top-[320px] left-[1880px] w-[1696px] h-[1524px]">
+        {/* Main Video Panel - TV 4K Position */}
+        <div className="absolute top-[380px] left-[1940px] w-[1576px] h-[1404px]">
           <div 
             className="w-full h-full rounded-[130px] overflow-hidden"
           >
@@ -149,8 +148,8 @@ export const DigitalSignage = ({
           </div>
         </div>
 
-        {/* TV Cortel Footer Section - TV 4K Position - AJUSTADO */}
-        <div className="absolute top-[1870px] left-[1880px] w-[1696px] flex flex-col items-center justify-center space-y-2">
+        {/* TV Cortel Footer Section - TV 4K Position */}
+        <div className="absolute top-[1810px] left-[1940px] w-[1576px] flex flex-col items-center justify-center space-y-2">
           <h2 className="text-white font-lato font-black text-[56px]">
             TV CORTEL
           </h2>
