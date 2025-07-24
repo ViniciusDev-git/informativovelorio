@@ -16,7 +16,6 @@ enum VideoState {
 // Detecção robusta de Smart TV webOS
 const detectWebOSTV = () => {
   const userAgent = navigator.userAgent.toLowerCase();
-  const platform = navigator.platform?.toLowerCase() || '';
   
   // Verificações específicas para webOS
   const webOSIndicators = [
@@ -60,15 +59,45 @@ const detectWebOSTV = () => {
          (isLargeScreen && isTVAspectRatio && hasNoTouch);
 };
 
+// Detectar possíveis problemas de configuração da TV
+const detectTVConfigIssues = () => {
+  const issues = [];
+  
+  // Verificar memória disponível
+  if ((performance as any).memory) {
+    const memInfo = (performance as any).memory;
+    if (memInfo.usedJSHeapSize > 50000000) { // 50MB
+      issues.push('Alto uso de memória detectado');
+    }
+  }
+  
+  // Verificar WebGL (hardware acceleration)
+  const canvas = document.createElement('canvas');
+  const gl = canvas.getContext('webgl');
+  if (!gl) {
+    issues.push('WebGL não disponível - possível problema de aceleração de hardware');
+  }
+  
+  // Verificar se há indicadores de Energy Saving ativo
+  // (Isso é uma heurística baseada em mudanças de brilho)
+  const brightness = window.screen?.brightness;
+  if (brightness && brightness < 0.8) {
+    issues.push('Possível Energy Saving Mode ativo');
+  }
+  
+  return issues;
+};
+
 export const VideoPlayer = ({ videoUrl, className }: VideoPlayerProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoState, setVideoState] = useState<VideoState>(VideoState.LOADING);
   const [isWebOS] = useState(detectWebOSTV());
   const [retryCount, setRetryCount] = useState(0);
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const [tvIssues] = useState(detectTVConfigIssues());
   
-  const maxRetries = 3;
-  const playTimeout = isWebOS ? 10000 : 5000; // 10s para webOS, 5s para outros
+  const maxRetries = 5;
+  const playTimeout = isWebOS ? 15000 : 7000;
 
   // Função para obter URL absoluta do vídeo
   const getAbsoluteVideoUrl = () => {
@@ -85,6 +114,41 @@ export const VideoPlayer = ({ videoUrl, className }: VideoPlayerProps) => {
     return videoUrl;
   };
 
+  // Função para configurar vídeo otimizado para webOS
+  const configureVideoForWebOS = (video: HTMLVideoElement) => {
+    // Configurações básicas
+    video.muted = true;
+    video.loop = true;
+    video.playsInline = true;
+    video.autoplay = true;
+    
+    if (isWebOS) {
+      // Configurações específicas para webOS
+      video.preload = "auto";
+      video.crossOrigin = "anonymous";
+      
+      // Atributos específicos para webOS
+      video.setAttribute('webkit-playsinline', 'true');
+      video.setAttribute('x5-playsinline', 'true');
+      video.setAttribute('playsinline', 'true');
+      
+      // Desabilitar controles nativos
+      video.controls = false;
+      video.disablePictureInPicture = true;
+      
+      // Configurações para evitar problemas de flickering
+      video.style.willChange = 'auto'; // Evitar forçar compositing
+      video.style.transform = 'translateZ(0)'; // Forçar layer de hardware
+      
+      // Configurações de buffer mais conservadoras
+      if ('buffered' in video) {
+        video.setAttribute('preload', 'auto');
+      }
+    } else {
+      video.preload = "metadata";
+    }
+  };
+
   // Função principal de inicialização do vídeo
   const initializeVideo = async () => {
     const video = videoRef.current;
@@ -93,7 +157,8 @@ export const VideoPlayer = ({ videoUrl, className }: VideoPlayerProps) => {
     console.log('Initializing video:', {
       isWebOS,
       videoUrl: getAbsoluteVideoUrl(),
-      retryCount
+      retryCount,
+      tvIssues
     });
 
     try {
@@ -101,33 +166,8 @@ export const VideoPlayer = ({ videoUrl, className }: VideoPlayerProps) => {
       setVideoState(VideoState.LOADING);
       setErrorMessage('');
       
-      // Configurações básicas
-      video.muted = true;
-      video.loop = true;
-      video.playsInline = true;
-      video.autoplay = true;
-      
-      // Configurações específicas para webOS
-      if (isWebOS) {
-        video.preload = "auto";
-        video.crossOrigin = "anonymous";
-        
-        // Atributos específicos para webOS
-        video.setAttribute('webkit-playsinline', 'true');
-        video.setAttribute('x5-playsinline', 'true');
-        video.setAttribute('playsinline', 'true');
-        
-        // Desabilitar controles nativos
-        video.controls = false;
-        video.disablePictureInPicture = true;
-        
-        // Configurações de buffer para webOS
-        if ('buffered' in video) {
-          video.setAttribute('preload', 'auto');
-        }
-      } else {
-        video.preload = "metadata";
-      }
+      // Configurar vídeo
+      configureVideoForWebOS(video);
 
       // Definir source
       const absoluteUrl = getAbsoluteVideoUrl();
@@ -135,13 +175,20 @@ export const VideoPlayer = ({ videoUrl, className }: VideoPlayerProps) => {
         video.src = absoluteUrl;
       }
 
+      // Para webOS, aguardar um pouco antes de carregar
+      if (isWebOS) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+
       // Aguardar carregamento dos metadados
       await new Promise<void>((resolve, reject) => {
         const timeout = setTimeout(() => {
+          console.warn('Timeout ao carregar metadados do vídeo');
           reject(new Error('Timeout ao carregar metadados do vídeo'));
         }, playTimeout);
 
         const onLoadedMetadata = () => {
+          console.log('loadedmetadata event fired');
           clearTimeout(timeout);
           video.removeEventListener('loadedmetadata', onLoadedMetadata);
           video.removeEventListener('error', onError);
@@ -149,6 +196,7 @@ export const VideoPlayer = ({ videoUrl, className }: VideoPlayerProps) => {
         };
 
         const onError = (e: Event) => {
+          console.error('Error event during metadata load:', e);
           clearTimeout(timeout);
           video.removeEventListener('loadedmetadata', onLoadedMetadata);
           video.removeEventListener('error', onError);
@@ -160,14 +208,22 @@ export const VideoPlayer = ({ videoUrl, className }: VideoPlayerProps) => {
 
         // Forçar carregamento se necessário
         if (video.readyState >= 1) {
+          console.log('Video already has metadata, resolving immediately');
           onLoadedMetadata();
         } else {
+          console.log('Loading video for metadata');
           video.load();
         }
       });
 
       setVideoState(VideoState.READY);
-
+      console.log('Video is READY, attempting play...');
+      
+      // Para webOS, aguardar mais um pouco antes de tentar reproduzir
+      if (isWebOS) {
+        await new Promise(resolve => setTimeout(resolve, 1500));
+      }
+      
       // Tentar reproduzir
       await attemptPlay();
 
@@ -182,20 +238,19 @@ export const VideoPlayer = ({ videoUrl, className }: VideoPlayerProps) => {
     const video = videoRef.current;
     if (!video) return;
 
+    console.log('Attempting to play video...');
     try {
-      // Para webOS, aguardar um pouco antes de tentar play
-      if (isWebOS) {
-        await new Promise(resolve => setTimeout(resolve, 500));
-      }
-
-      // Verificar se o vídeo está pronto
-      if (video.readyState < 3) {
+      // Verificar se o vídeo está pronto para reprodução
+      if (video.readyState < 3) { // HAVE_FUTURE_DATA or HAVE_ENOUGH_DATA
+        console.log(`Video not ready for play (readyState: ${video.readyState}), waiting for canplay`);
         await new Promise<void>((resolve, reject) => {
           const timeout = setTimeout(() => {
-            reject(new Error('Vídeo não ficou pronto para reprodução'));
+            console.warn('Timeout waiting for canplay event');
+            reject(new Error('Vídeo não ficou pronto para reprodução (canplay timeout)'));
           }, playTimeout);
 
           const onCanPlay = () => {
+            console.log('canplay event fired');
             clearTimeout(timeout);
             video.removeEventListener('canplay', onCanPlay);
             resolve();
@@ -204,6 +259,7 @@ export const VideoPlayer = ({ videoUrl, className }: VideoPlayerProps) => {
           video.addEventListener('canplay', onCanPlay);
           
           if (video.readyState >= 3) {
+            console.log('Video already canplay, resolving immediately');
             onCanPlay();
           }
         });
@@ -228,14 +284,14 @@ export const VideoPlayer = ({ videoUrl, className }: VideoPlayerProps) => {
 
   // Função para lidar com erros
   const handleVideoError = (error: Error) => {
-    console.error('Video error:', error);
+    console.error('Video error handler:', error);
     setErrorMessage(error.message || 'Erro desconhecido');
     
     if (retryCount < maxRetries) {
       console.log(`Tentando novamente (${retryCount + 1}/${maxRetries})`);
       setTimeout(() => {
         setRetryCount(prev => prev + 1);
-      }, 2000);
+      }, 3000);
     } else {
       setVideoState(VideoState.ERROR);
     }
@@ -277,11 +333,7 @@ export const VideoPlayer = ({ videoUrl, className }: VideoPlayerProps) => {
     if (!video) return;
 
     const handleWaiting = () => {
-      console.log('Video waiting/buffering');
-      if (videoState === VideoState.PLAYING) {
-        // Não mudar estado se já estiver reproduzindo
-        return;
-      }
+      console.log('Video waiting/buffering event');
     };
 
     const handlePlaying = () => {
@@ -290,37 +342,60 @@ export const VideoPlayer = ({ videoUrl, className }: VideoPlayerProps) => {
     };
 
     const handlePause = () => {
-      console.log('Video paused');
-      // Tentar retomar reprodução se foi pausado inesperadamente
-      if (videoState === VideoState.PLAYING) {
+      console.log('Video paused event');
+      // Para webOS, tentar retomar reprodução mais agressivamente
+      if (videoState === VideoState.PLAYING && isWebOS) {
+        console.log('Attempting to resume playback after unexpected pause (webOS)');
         setTimeout(() => {
-          video.play().catch(console.error);
-        }, 1000);
+          video.play().catch(err => console.error('Error resuming play:', err));
+        }, 500);
       }
     };
 
     const handleStalled = () => {
-      console.log('Video stalled');
-      // Tentar recarregar se travou
-      setTimeout(() => {
-        if (video.readyState < 3) {
-          video.load();
+      console.log('Video stalled event');
+      // Para webOS, tentar recarregar mais rapidamente
+      if (isWebOS) {
+        console.log('Attempting to reload video after stalled event (webOS)');
+        setTimeout(() => {
+          if (video.readyState < 3) {
+            video.load();
+          }
+        }, 1000);
+      }
+    };
+
+    const handleEnded = () => {
+      console.log('Video ended event, replaying...');
+      video.play().catch(err => console.error('Error replaying video:', err));
+    };
+
+    // Event listener específico para webOS para detectar problemas de flickering
+    const handleTimeUpdate = () => {
+      if (isWebOS && video.currentTime > 0) {
+        // Se o vídeo está reproduzindo normalmente, garantir que está visível
+        if (videoState !== VideoState.PLAYING) {
+          setVideoState(VideoState.PLAYING);
         }
-      }, 2000);
+      }
     };
 
     video.addEventListener('waiting', handleWaiting);
     video.addEventListener('playing', handlePlaying);
     video.addEventListener('pause', handlePause);
     video.addEventListener('stalled', handleStalled);
+    video.addEventListener('ended', handleEnded);
+    video.addEventListener('timeupdate', handleTimeUpdate);
 
     return () => {
       video.removeEventListener('waiting', handleWaiting);
       video.removeEventListener('playing', handlePlaying);
       video.removeEventListener('pause', handlePause);
       video.removeEventListener('stalled', handleStalled);
+      video.removeEventListener('ended', handleEnded);
+      video.removeEventListener('timeupdate', handleTimeUpdate);
     };
-  }, [videoState]);
+  }, [videoState, isWebOS]);
 
   return (
     <div className="relative w-full h-full flex items-center justify-center bg-transparent">
@@ -334,16 +409,18 @@ export const VideoPlayer = ({ videoUrl, className }: VideoPlayerProps) => {
         playsInline
         preload={isWebOS ? "auto" : "metadata"}
         style={{
-          objectFit: 'scale-down',
+          objectFit: 'contain', // Usar 'contain' para evitar cortes
           objectPosition: 'center',
           display: videoState === VideoState.PLAYING ? 'block' : 'none',
           backgroundColor: 'transparent',
-          // Configurações específicas para webOS
+          // Configurações específicas para webOS para evitar flickering
           ...(isWebOS && {
             width: '100%',
             height: '100%',
             maxWidth: '100%',
-            maxHeight: '100%'
+            maxHeight: '100%',
+            willChange: 'auto',
+            transform: 'translateZ(0)'
           })
         }}
         // Atributos específicos para webOS
@@ -373,6 +450,16 @@ export const VideoPlayer = ({ videoUrl, className }: VideoPlayerProps) => {
                 Tentativa {retryCount + 1} de {maxRetries + 1}
               </p>
             )}
+            {tvIssues.length > 0 && isWebOS && (
+              <div className="mt-4 text-xs text-yellow-200">
+                <p>⚠️ Possíveis problemas detectados:</p>
+                <ul className="text-left mt-1">
+                  {tvIssues.map((issue, index) => (
+                    <li key={index}>• {issue}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -388,8 +475,13 @@ export const VideoPlayer = ({ videoUrl, className }: VideoPlayerProps) => {
             </div>
             <p className="text-lg md:text-2xl font-medium mb-2">Erro ao carregar vídeo</p>
             <p className="text-sm md:text-base text-white/80 mb-2">
-              {isWebOS ? "Problema na reprodução webOS TV" : "Verifique sua conexão"}
+              {isWebOS ? "Verifique as configurações da TV" : "Verifique sua conexão"}
             </p>
+            {isWebOS && (
+              <div className="text-xs text-yellow-200 mb-4">
+                <p>💡 Dica: Verifique se Energy Saving Mode e TruMotion estão desabilitados nas configurações da TV</p>
+              </div>
+            )}
             {errorMessage && (
               <p className="text-xs md:text-sm text-white/60 mb-4 font-mono">
                 {errorMessage}
@@ -416,9 +508,13 @@ export const VideoPlayer = ({ videoUrl, className }: VideoPlayerProps) => {
           {videoRef.current && (
             <div>Ready: {videoRef.current.readyState}</div>
           )}
+          {tvIssues.length > 0 && (
+            <div className="mt-1 text-yellow-300">
+              Issues: {tvIssues.length}
+            </div>
+          )}
         </div>
       )}
     </div>
   );
 };
-
