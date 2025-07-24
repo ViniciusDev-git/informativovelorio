@@ -21,7 +21,7 @@ const mockFunerals: FuneralData[] = [
   {
     nome: "Francisco Inerdacis",
     sala: "SALA C",
-    data: "2025-07-23",
+    data: "2025-07-24",
     hora_inicio: "07:00",
     hora_fim: "10:00",
     local_sepultamento: "Cemitério Araçá"
@@ -29,7 +29,7 @@ const mockFunerals: FuneralData[] = [
   {
     nome: "Maria Santos Silva",
     sala: "SALA A",
-    data: "2025-07-23",
+    data: "2025-07-24",
     hora_inicio: "09:00",
     hora_fim: "12:00",
     local_sepultamento: "Cemitério da Consolação"
@@ -37,7 +37,7 @@ const mockFunerals: FuneralData[] = [
   {
     nome: "João da Silva",
     sala: "SALA B",
-    data: "2025-07-23",
+    data: "2025-07-24",
     hora_inicio: "14:00",
     hora_fim: "17:00",
     local_sepultamento: "Cemitério São Paulo"
@@ -45,7 +45,7 @@ const mockFunerals: FuneralData[] = [
   {
     nome: "Ana Costa Lima",
     sala: "SALA D",
-    data: "2025-07-23",
+    data: "2025-07-24",
     hora_inicio: "16:00",
     hora_fim: "19:00",
     local_sepultamento: "Cemitério Quarta Parada"
@@ -53,7 +53,7 @@ const mockFunerals: FuneralData[] = [
   {
     nome: "Carlos Eduardo",
     sala: "SALA E",
-    data: "2025-07-23",
+    data: "2025-07-24",
     hora_inicio: "08:00",
     hora_fim: "11:00",
     local_sepultamento: "Cemitério Vila Alpina"
@@ -61,7 +61,7 @@ const mockFunerals: FuneralData[] = [
   {
     nome: "Rosa Maria",
     sala: "SALA F",
-    data: "2025-07-23",
+    data: "2025-07-24",
     hora_inicio: "13:00",
     hora_fim: "16:00",
     local_sepultamento: "Cemitério Padre Miguel"
@@ -69,7 +69,7 @@ const mockFunerals: FuneralData[] = [
   {
     nome: "Antonio Fernandes",
     sala: "SALA G",
-    data: "2025-07-23",
+    data: "2025-07-24",
     hora_inicio: "15:00",
     hora_fim: "18:00",
     local_sepultamento: "Cemitério Vila Formosa"
