@@ -85,6 +85,20 @@ export const DigitalSignage = ({
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
   const { activeFunerals, expiredCount } = useFuneralFilter(funerals);
 
+  // Detectar se é uma tela grande (4K ou similar)
+  const [isLargeScreen, setIsLargeScreen] = useState(false);
+
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsLargeScreen(window.innerWidth >= 3840 || window.innerHeight >= 2160);
+    };
+
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
+
   // Simulate data fetching from Google Sheets
   useEffect(() => {
     const fetchFuneralData = async () => {
@@ -116,109 +130,119 @@ export const DigitalSignage = ({
       {/* Subtle shimmer effect */}
       <div className="absolute inset-0 animate-shimmer-subtle pointer-events-none"></div>
       
-      {/* TV 4K Layout (3840x2160) */}
-      <div className="hidden 4k:block relative w-[3840px] h-[2160px] mx-auto scale-100">
-        {/* Título Principal - TV 4K Position */}
-        <div className="absolute top-[120px] left-[322px]">
-          <h1 className="text-white font-lato font-black text-[148px] leading-none">
-            Informativo de Velórios
-          </h1>
-        </div>
+      {/* TV 4K Layout (3840x2160) - Versão Melhorada */}
+      {isLargeScreen && (
+        <div className="relative w-full h-screen flex flex-col" style={{ minHeight: '2160px' }}>
+          {/* Header Section - TV 4K */}
+          <div className="flex justify-between items-start p-16 pt-20">
+            <div className="flex-1">
+              <h1 className="text-white font-lato font-black text-[148px] leading-none">
+                Informativo de Velórios
+              </h1>
+            </div>
+            <div className="w-[794px] h-[260px] ml-16">
+              <img 
+                src="/images/logo-cortel-branco.svg"
+                alt="Cortel São Paulo"
+                className="w-full h-full object-contain"
+              />
+            </div>
+          </div>
 
-        {/* Logo Cortel - TV 4K Position */}
-        <div className="absolute top-[74px] left-[2330px] w-[794px] h-[260px]">
-          <img 
-            src="/images/logo-cortel-branco.svg"
-            alt="Cortel São Paulo"
-            className="w-full h-full object-contain"
-          />
-        </div>
+          {/* Content Section - TV 4K */}
+          <div className="flex-1 flex px-16 gap-16">
+            {/* Funeral Cards Container - TV 4K */}
+            <div className="w-[1600px] flex-shrink-0">
+              <FuneralList funerals={activeFunerals} />
+            </div>
 
-        {/* Funeral Cards Container - TV 4K */}
-        <div className="absolute top-[380px] left-[161px] w-[1600px] h-[1404px]">
-          <FuneralList funerals={activeFunerals} />
-        </div>
+            {/* Main Video Panel - TV 4K */}
+            <div className="flex-1 min-h-[1400px]">
+              <div 
+                className="w-full h-full rounded-[130px] overflow-hidden"
+                style={{ 
+                  backgroundColor: 'rgba(255, 0, 0, 0.1)', // Background temporário para debug
+                  minHeight: '1400px'
+                }}
+              >
+                <TVSection videoUrl={videoUrl} />
+              </div>
+            </div>
+          </div>
 
-        {/* Main Video Panel - TV 4K Position */}
-        <div className="absolute top-[380px] left-[1940px] w-[1576px] h-[1404px]">
-          <div 
-            className="w-full h-full rounded-[130px] overflow-hidden"
-          >
-            <TVSection videoUrl={videoUrl} />
+          {/* Footer Section - TV 4K */}
+          <div className="px-16 pb-16">
+            <div className="flex justify-between items-end">
+              <p className="text-white/70 text-[28px]">
+                Atualizado às {lastUpdate.toLocaleTimeString('pt-BR')}
+              </p>
+              <div className="flex flex-col items-center space-y-2">
+                <h2 className="text-white font-lato font-black text-[56px]">
+                  TV CORTEL
+                </h2>
+                <img 
+                  src="/images/logo-parceiros.svg"
+                  alt="Parceiros"
+                  className="w-[1000px] h-[160px] object-contain"
+                />
+              </div>
+            </div>
           </div>
         </div>
-
-        {/* TV Cortel Footer Section - TV 4K Position */}
-        <div className="absolute top-[1810px] left-[1940px] w-[1576px] flex flex-col items-center justify-center space-y-2">
-          <h2 className="text-white font-lato font-black text-[56px]">
-            TV CORTEL
-          </h2>
-          
-          <img 
-            src="/images/logo-parceiros.svg"
-            alt="Parceiros"
-            className="w-[1000px] h-[160px] object-contain"
-          />
-        </div>
-
-        {/* Update indicator - TV 4K */}
-        <div className="absolute bottom-[40px] left-[322px]">
-          <p className="text-white/70 text-[28px]">
-            Atualizado às {lastUpdate.toLocaleTimeString('pt-BR')}
-          </p>
-        </div>
-      </div>
+      )}
       
-      {/* Desktop Layout (1920x1080) */}
-      <div className="hidden xl:block 4k:hidden relative w-[1920px] h-[1080px] mx-auto">
-        {/* Título Principal - Desktop Position */}
-        <div className="absolute top-[60px] left-[161px]">
-          <h1 className="text-white font-lato font-black text-[74px] leading-none">
-            Informativo de Velórios
-          </h1>
-        </div>
+      {/* Desktop Layout (1920x1080) - Fallback para telas menores */}
+      {!isLargeScreen && (
+        <div className="hidden xl:block relative w-[1920px] h-[1080px] mx-auto">
+          {/* Título Principal - Desktop Position */}
+          <div className="absolute top-[60px] left-[161px]">
+            <h1 className="text-white font-lato font-black text-[74px] leading-none">
+              Informativo de Velórios
+            </h1>
+          </div>
 
-        {/* Logo Cortel - Desktop Position */}
-        <div className="absolute top-[37px] left-[1165px] w-[397px] h-[130px]">
-          <img 
-            src="/images/logo-cortel-branco.svg"
-            alt="Cortel São Paulo"
-            className="w-full h-full object-contain"
-          />
-        </div>
+          {/* Logo Cortel - Desktop Position */}
+          <div className="absolute top-[37px] left-[1165px] w-[397px] h-[130px]">
+            <img 
+              src="/images/logo-cortel-branco.svg"
+              alt="Cortel São Paulo"
+              className="w-full h-full object-contain"
+            />
+          </div>
 
-        {/* Funeral Cards Container - Desktop */}
-        <FuneralList funerals={activeFunerals} />
+          {/* Funeral Cards Container - Desktop */}
+          <FuneralList funerals={activeFunerals} />
 
-        {/* Main Video Panel - Desktop Position */}
-        <div className="absolute top-[190px] left-[970px] w-[788px] h-[702px]">
-          <div 
-            className="w-full h-full rounded-[65px] overflow-hidden"
-          >
-            <TVSection videoUrl={videoUrl} />
+          {/* Main Video Panel - Desktop Position */}
+          <div className="absolute top-[190px] left-[970px] w-[788px] h-[702px]">
+            <div 
+              className="w-full h-full rounded-[65px] overflow-hidden"
+            >
+              <TVSection videoUrl={videoUrl} />
+            </div>
+          </div>
+
+          {/* TV Cortel Footer Section - Desktop Position */}
+          <div className="absolute top-[905px] left-[970px] w-[788px] flex flex-col items-center justify-center space-y-1">
+            <h2 className="text-white font-lato font-black text-[28px]">
+              TV CORTEL
+            </h2>
+            
+            <img 
+              src="/images/logo-parceiros.svg"
+              alt="Parceiros"
+              className="w-[500px] h-[80px] object-contain"
+            />
+          </div>
+
+          {/* Update indicator - Desktop */}
+          <div className="absolute bottom-[20px] left-[161px]">
+            <p className="text-white/70 text-sm">
+              Atualizado às {lastUpdate.toLocaleTimeString('pt-BR')}
+            </p>
           </div>
         </div>
-
-        {/* TV Cortel Footer Section - Desktop Position */}
-        <div className="absolute top-[905px] left-[970px] w-[788px] flex flex-col items-center justify-center space-y-1">
-          <h2 className="text-white font-lato font-black text-[28px]">
-            TV CORTEL
-          </h2>
-          
-          <img 
-            src="/images/logo-parceiros.svg"
-            alt="Parceiros"
-            className="w-[500px] h-[80px] object-contain"
-          />
-        </div>
-
-        {/* Update indicator - Desktop */}
-        <div className="absolute bottom-[20px] left-[161px]">
-          <p className="text-white/70 text-sm">
-            Atualizado às {lastUpdate.toLocaleTimeString('pt-BR')}
-          </p>
-        </div>
-      </div>
+      )}
 
       {/* Tablet Layout */}
       <div className="hidden md:block xl:hidden relative w-full h-screen p-6">
