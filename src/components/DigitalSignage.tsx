@@ -22,56 +22,56 @@ const mockFunerals: FuneralData[] = [
     nome: "Francisco Inerdacis",
     sala: "SALA C",
     data: "2025-07-24",
-    hora_inicio: "07:00",
-    hora_fim: "10:00",
+    hora_inicio: "23:59",
+    hora_fim: "00:00",
     local_sepultamento: "Cemitério Araçá"
   },
   {
     nome: "Maria Santos Silva",
     sala: "SALA A",
     data: "2025-07-24",
-    hora_inicio: "09:00",
-    hora_fim: "12:00",
+    hora_inicio: "23:59",
+    hora_fim: "00:00",
     local_sepultamento: "Cemitério da Consolação"
   },
   {
     nome: "João da Silva",
     sala: "SALA B",
     data: "2025-07-24",
-    hora_inicio: "14:00",
-    hora_fim: "17:00",
+    hora_inicio: "23:59",
+    hora_fim: "00:00",
     local_sepultamento: "Cemitério São Paulo"
   },
   {
     nome: "Ana Costa Lima",
     sala: "SALA D",
     data: "2025-07-24",
-    hora_inicio: "16:00",
-    hora_fim: "19:00",
+    hora_inicio: "23:59",
+    hora_fim: "00:00",
     local_sepultamento: "Cemitério Quarta Parada"
   },
   {
     nome: "Carlos Eduardo",
     sala: "SALA E",
     data: "2025-07-24",
-    hora_inicio: "08:00",
-    hora_fim: "11:00",
+    hora_inicio: "23:59",
+    hora_fim: "00:00",
     local_sepultamento: "Cemitério Vila Alpina"
   },
   {
     nome: "Rosa Maria",
     sala: "SALA F",
     data: "2025-07-24",
-    hora_inicio: "13:00",
-    hora_fim: "16:00",
+    hora_inicio: "23:59",
+    hora_fim: "00:00",
     local_sepultamento: "Cemitério Padre Miguel"
   },
   {
     nome: "Antonio Fernandes",
     sala: "SALA G",
     data: "2025-07-24",
-    hora_inicio: "15:00",
-    hora_fim: "18:00",
+    hora_inicio: "23:50",
+    hora_fim: "00:00",
     local_sepultamento: "Cemitério Vila Formosa"
   }
 ];
