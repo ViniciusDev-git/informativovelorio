@@ -9,7 +9,6 @@ export const TVSection = ({
 }: TVSectionProps) => {
   return (
     <div className="w-full h-full relative overflow-hidden">
-      {/* Logo de fundo com opacidade - otimizado */}
       <div 
         className="absolute inset-0 bg-center bg-no-repeat bg-contain opacity-10 pointer-events-none"
         style={{
@@ -18,8 +17,6 @@ export const TVSection = ({
           backgroundPosition: 'center'
         }}
       />
-      
-      {/* Video Player Container - otimizado para webOS */}
       <div className="relative z-10 w-full h-full">
         <VideoPlayer 
           videoUrl={videoUrl}
@@ -29,4 +26,3 @@ export const TVSection = ({
     </div>
   );
 };
-
