@@ -83,22 +83,30 @@ const detectSmartTV = () => {
   const screenWidth = window.innerWidth;
   const screenHeight = window.innerHeight;
   
-  // Verificações de User Agent para Smart TVs
+  // Verificações de User Agent mais abrangentes
   const tvUserAgents = [
     'smart-tv', 'smarttv', 'tv', 'webos', 'tizen', 
-    'netcast', 'hbbtv', 'ce-html', 'opera tv'
+    'netcast', 'hbbtv', 'ce-html', 'opera tv',
+    'samsung', 'lg', 'sony', 'philips'
   ];
   
   const isTVUserAgent = tvUserAgents.some(agent => userAgent.includes(agent));
   
-  // Verificação de resolução (4K ou similar)
-  const is4K = screenWidth >= 3840 || screenHeight >= 2160;
+  // Verificação de resolução mais flexível
+  const isLargeScreen = screenWidth >= 1920 && screenHeight >= 1080;
+  const isUltraWide = screenWidth >= 3840 || screenHeight >= 2160;
   
-  // Verificação de proporção típica de TV
+  // Verificação de proporção mais flexível
   const aspectRatio = screenWidth / screenHeight;
-  const isTVAspectRatio = aspectRatio >= 1.7 && aspectRatio <= 1.8; // 16:9 aproximadamente
+  const isTVAspectRatio = aspectRatio >= 1.5 && aspectRatio <= 2.0;
   
-  return isTVUserAgent || (is4K && isTVAspectRatio);
+  // Detecção por características do ambiente
+  const hasLimitedInputMethods = !('ontouchstart' in window) && 
+                                 navigator.maxTouchPoints === 0;
+  
+  return isTVUserAgent || 
+         (isUltraWide && isTVAspectRatio) || 
+         (isLargeScreen && hasLimitedInputMethods && isTVAspectRatio);
 };
 
 export const DigitalSignage = ({ 
@@ -109,7 +117,7 @@ export const DigitalSignage = ({
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
   const { activeFunerals, expiredCount } = useFuneralFilter(funerals);
   
-  // Detecção mais robusta de Smart TV
+  // Detecção de Smart TV
   const [isSmartTV, setIsSmartTV] = useState(false);
   const [screenInfo, setScreenInfo] = useState({
     width: 0,
@@ -124,15 +132,18 @@ export const DigitalSignage = ({
       const ratio = width / height;
       
       setScreenInfo({ width, height, ratio });
-      setIsSmartTV(detectSmartTV());
+      const tvDetected = detectSmartTV();
+      setIsSmartTV(tvDetected);
       
-      // Log para debug
+      // Log detalhado para debug
       console.log('Screen Detection:', {
         width,
         height,
         ratio: ratio.toFixed(2),
         userAgent: navigator.userAgent,
-        isSmartTV: detectSmartTV()
+        isSmartTV: tvDetected,
+        touchSupport: 'ontouchstart' in window,
+        maxTouchPoints: navigator.maxTouchPoints
       });
     };
 
@@ -160,23 +171,22 @@ export const DigitalSignage = ({
   }, [sheetsUrl]);
 
   return (
-    <div 
-      className="relative w-full min-h-screen overflow-hidden bg-gradient-animated"
-    >
+    <div className="relative w-full min-h-screen overflow-hidden bg-gradient-animated">
       {/* Subtle shimmer effect */}
       <div className="absolute inset-0 animate-shimmer-subtle pointer-events-none"></div>
       
-      {/* Smart TV Layout (4K) - Versão Otimizada */}
+      {/* Smart TV Layout - Responsivo com viewport units */}
       {isSmartTV && (
-        <div className="relative w-full h-screen flex flex-col" style={{ minHeight: '2160px' }}>
+        <div className="relative w-full h-screen flex flex-col">
           {/* Header Section - Smart TV */}
-          <div className="flex justify-between items-start p-16 pt-20">
-            <div className="flex-1">
-              <h1 className="text-white font-lato font-black text-[148px] leading-none">
+          <div className="flex justify-between items-start p-[2vw] pt-[3vh]">
+            <div className="flex-1 max-w-[60vw]">
+              <h1 className="text-white font-lato font-black leading-none" 
+                  style={{ fontSize: 'clamp(4rem, 8vw, 12rem)' }}>
                 Informativo de Velórios
               </h1>
             </div>
-            <div className="w-[794px] h-[260px] ml-16">
+            <div className="ml-[2vw]" style={{ width: 'clamp(300px, 20vw, 800px)', height: 'clamp(100px, 12vh, 300px)' }}>
               <img 
                 src="/images/logo-cortel-branco.svg"
                 alt="Cortel São Paulo"
@@ -186,17 +196,20 @@ export const DigitalSignage = ({
           </div>
 
           {/* Content Section - Smart TV */}
-          <div className="flex-1 flex px-16 gap-16">
+          <div className="flex-1 flex px-[2vw] gap-[2vw] min-h-0">
             {/* Funeral Cards Container - Smart TV */}
-            <div className="w-[1600px] flex-shrink-0">
+            <div className="flex-shrink-0" style={{ width: 'clamp(600px, 42vw, 1600px)' }}>
               <FuneralList funerals={activeFunerals} />
             </div>
 
             {/* Main Video Panel - Smart TV */}
-            <div className="flex-1 min-h-[1400px]">
+            <div className="flex-1 min-h-0">
               <div 
-                className="w-full h-full rounded-[130px] overflow-hidden bg-black/10"
-                style={{ minHeight: '1400px' }}
+                className="w-full h-full overflow-hidden bg-transparent"
+                style={{ 
+                  borderRadius: 'clamp(30px, 3vw, 130px)',
+                  minHeight: '60vh'
+                }}
               >
                 <TVSection videoUrl={videoUrl} />
               </div>
@@ -204,27 +217,32 @@ export const DigitalSignage = ({
           </div>
 
           {/* Footer Section - Smart TV */}
-          <div className="px-16 pb-16">
+          <div className="px-[2vw] pb-[2vh]">
             <div className="flex justify-between items-end">
               <div>
-                <p className="text-white/70 text-[28px]">
+                <p className="text-white/70" style={{ fontSize: 'clamp(1rem, 1.5vw, 2rem)' }}>
                   Atualizado às {lastUpdate.toLocaleTimeString('pt-BR')}
                 </p>
                 {/* Debug info para desenvolvimento */}
                 {process.env.NODE_ENV === 'development' && (
-                  <p className="text-white/50 text-[20px] mt-2">
+                  <p className="text-white/50 mt-2" style={{ fontSize: 'clamp(0.8rem, 1.2vw, 1.5rem)' }}>
                     Smart TV: {screenInfo.width}x{screenInfo.height} (Ratio: {screenInfo.ratio.toFixed(2)})
                   </p>
                 )}
               </div>
               <div className="flex flex-col items-center space-y-2">
-                <h2 className="text-white font-lato font-black text-[56px]">
+                <h2 className="text-white font-lato font-black" 
+                    style={{ fontSize: 'clamp(2rem, 3vw, 4rem)' }}>
                   TV CORTEL
                 </h2>
                 <img 
                   src="/images/logo-parceiros.svg"
                   alt="Parceiros"
-                  className="w-[1000px] h-[160px] object-contain"
+                  className="object-contain"
+                  style={{ 
+                    width: 'clamp(400px, 25vw, 1000px)', 
+                    height: 'clamp(60px, 8vh, 160px)' 
+                  }}
                 />
               </div>
             </div>
