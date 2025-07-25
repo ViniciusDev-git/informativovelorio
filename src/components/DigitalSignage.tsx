@@ -23,15 +23,15 @@ const mockFunerals: FuneralData[] = [
     sala: "SALA C",
     data: "2025-07-25",
     hora_inicio: "07:00",
-    hora_fim: "22:00",
+    hora_fim: "23:00",
     local_sepultamento: "Cemitério Araçá"
   },
   {
     nome: "Maria Santos Silva",
     sala: "SALA A",
-    data: "2025-07-24",
+    data: "2025-07-25",
     hora_inicio: "07:00",
-    hora_fim: "22:00",
+    hora_fim: "23:00",
     local_sepultamento: "Cemitério da Consolação"
   },
   {
@@ -39,7 +39,7 @@ const mockFunerals: FuneralData[] = [
     sala: "SALA B",
     data: "2025-07-25",
     hora_inicio: "07:00",
-    hora_fim: "22:00",
+    hora_fim: "23:00",
     local_sepultamento: "Cemitério São Paulo"
   },
   {
@@ -47,7 +47,7 @@ const mockFunerals: FuneralData[] = [
     sala: "SALA D",
     data: "2025-07-25",
     hora_inicio: "07:00",
-    hora_fim: "22:00",
+    hora_fim: "23:00",
     local_sepultamento: "Cemitério Quarta Parada"
   },
   {
@@ -55,24 +55,8 @@ const mockFunerals: FuneralData[] = [
     sala: "SALA E",
     data: "2025-07-25",
     hora_inicio: "07:00",
-    hora_fim: "22:00",
+    hora_fim: "23:00",
     local_sepultamento: "Cemitério Vila Alpina"
-  },
-  {
-    nome: "Rosa Maria",
-    sala: "SALA F",
-    data: "2025-07-25",
-    hora_inicio: "07:00",
-    hora_fim: "22:00",
-    local_sepultamento: "Cemitério Padre Miguel"
-  },
-  {
-    nome: "Antonio Fernandes",
-    sala: "SALA G",
-    data: "2025-07-25",
-    hora_inicio: "07:00",
-    hora_fim: "22:00",
-    local_sepultamento: "Cemitério Vila Formosa"
   }
 ];
 
@@ -144,36 +128,36 @@ export const DigitalSignage = ({
   }, [sheetsUrl]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-900 to-blue-600 p-4 lg:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-900 to-blue-600 p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex flex-col lg:flex-row justify-between items-center mb-8 space-y-4 lg:space-y-0">
-          <h1 className="text-white font-lato font-black text-3xl lg:text-5xl xl:text-6xl leading-tight text-center lg:text-left">
+          <h1 className="text-white font-lato font-black text-2xl md:text-3xl lg:text-4xl xl:text-5xl leading-tight text-center lg:text-left">
             Informativo de Velórios
           </h1>
           <img 
             src="/images/logo-cortel-branco.svg"
             alt="Cortel São Paulo"
-            className="w-48 lg:w-60 xl:w-80 h-auto object-contain"
+            className="w-32 md:w-40 lg:w-48 xl:w-64 h-auto object-contain"
           />
         </div>
 
         {/* Content Grid */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
           {/* Funeral Cards Section */}
-          <div className="order-2 xl:order-1">
+          <div className="md:order-1 w-full">
             <FuneralList funerals={activeFunerals} />
           </div>
 
           {/* Video Section */}
-          <div className="order-1 xl:order-2">
+          <div className="md:order-2 w-full">
             <div className="w-full aspect-video bg-black rounded-lg overflow-hidden">
               <TVSection videoUrl={videoUrl} />
             </div>
             
             {/* TV Cortel Footer */}
             <div className="mt-6 text-center">
-              <h2 className="text-white font-lato font-black text-2xl lg:text-3xl mb-4">
+              <h2 className="text-white font-lato font-black text-xl md:text-2xl lg:text-3xl xl:text-4xl mb-4">
                 TV CORTEL
               </h2>
               <img 

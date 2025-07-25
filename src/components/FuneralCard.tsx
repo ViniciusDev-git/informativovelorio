@@ -21,7 +21,7 @@ export const FuneralCard = ({ funeral, className, style }: FuneralCardProps) => 
 
   return (
     <div
-      className={`w-full h-full rounded-2xl p-3 transition-all duration-1000 ${className || ''}`}
+      className={`w-full h-full rounded-2xl p-4 transition-all duration-1000 ${className || ''}`}
       style={{
         backgroundColor: '#dae0ea',
         ...style
@@ -29,7 +29,7 @@ export const FuneralCard = ({ funeral, className, style }: FuneralCardProps) => 
     >
       {/* Nome do falecido - Responsive */}
       <h3 
-        className="font-lato font-black text-base md:text-lg xl:text-[20px] 4k:text-[40px] leading-tight mb-1"
+        className="font-lato font-black text-lg md:text-xl lg:text-2xl xl:text-3xl leading-tight mb-2"
         style={{ 
           color: '#042453'
         }}
@@ -38,9 +38,9 @@ export const FuneralCard = ({ funeral, className, style }: FuneralCardProps) => 
       </h3>
       
       {/* Sala - Responsive */}
-      <div className="mb-1">
+      <div className="mb-2">
         <span 
-          className="font-lato font-black text-sm md:text-base xl:text-[16px] 4k:text-[32px]"
+          className="font-lato font-black text-base md:text-lg lg:text-xl xl:text-2xl"
           style={{ 
             color: '#042453'
           }}
@@ -51,7 +51,7 @@ export const FuneralCard = ({ funeral, className, style }: FuneralCardProps) => 
       
       {/* Data e horário - Responsive */}
       <p 
-        className="font-lato font-black text-xs md:text-sm xl:text-[14px] 4k:text-[28px] mb-1"
+        className="font-lato font-black text-sm md:text-base lg:text-lg xl:text-xl mb-2"
         style={{ 
           color: '#042453'
         }}
@@ -61,7 +61,7 @@ export const FuneralCard = ({ funeral, className, style }: FuneralCardProps) => 
       
       {/* Local de sepultamento - Responsive */}
       <p 
-        className="font-lato font-black text-xs md:text-sm xl:text-[14px] 4k:text-[28px] leading-tight overflow-hidden"
+        className="font-lato font-black text-sm md:text-base lg:text-lg xl:text-xl leading-tight overflow-hidden"
         style={{ 
           color: '#042453',
           display: '-webkit-box',

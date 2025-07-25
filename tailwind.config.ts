@@ -22,8 +22,9 @@ export default {
 			'md': '768px',
 			'lg': '1024px',
 			'xl': '1280px',
-			'2xl': '1920px', // Para displays de sinalização digital
-			'4k': '3840px', // Para TVs 4K
+      '2xl': '1920px', // Para displays de sinalização digital e 1920x1200
+      '4k': '3840px', // Para TVs 4K
+      '1920': '1920px', // Breakpoint específico para 1920x1200
 		},
 		extend: {
 			colors: {

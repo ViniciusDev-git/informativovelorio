@@ -13,6 +13,22 @@ export default defineConfig({
       'Cross-Origin-Embedder-Policy': 'unsafe-none',
       'Cross-Origin-Opener-Policy': 'unsafe-none',
     },
+    hmr: {
+      host: '4173-imhl0re1esabgla8dobdy-93f8c0a8.manusvm.computer',
+      port: 443,
+      protocol: 'wss'
+    },
+  },
+  preview: {
+    host: '0.0.0.0',
+    port: 4173,
+    strictPort: true,
+    cors: true,
+    headers: {
+      'Cross-Origin-Embedder-Policy': 'unsafe-none',
+      'Cross-Origin-Opener-Policy': 'unsafe-none',
+    },
+    allowedHosts: ['4173-imhl0re1esabgla8dobdy-93f8c0a8.manusvm.computer'],
   },
   plugins: [react()],
   resolve: {
